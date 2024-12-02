@@ -122,14 +122,22 @@ const DictionaryPage = () => {
   const renderTranslationBox = (boxId) => {
     const translation = translations[boxId];
     return translation ? (
-      <div>
-        <p><strong>Translated Word:</strong> {translation.translated_word}</p>
-        <p><strong>Word Class:</strong> {translation.word_class}</p>
-        <p><strong>Pronunciation:</strong> {translation.pronunciation}</p>
-        <p><strong>Synonym:</strong> {translation.synonym}</p>
-        <p><strong>Usage Sentence:</strong> {translation.usage_sentence}</p>
+      <div className="box-content">
+        <div className="content-text">
+          <p><strong>Translated Word:</strong> </p> 
+          <p> {translation.translated_word}</p>
+          <p><strong>Word Class:</strong></p> 
+          <p> {translation.word_class}</p>
+          <p><strong>Pronunciation:</strong></p> 
+          <p> {translation.pronunciation}</p>
+          <p><strong>Synonym:</strong></p> 
+          <p> {translation.synonym}</p>
+          <p><strong>Usage Sentence:</strong></p> 
+          <p> {translation.usage_sentence}</p>
+        </div>
+
         {translation.audio_file && translation.audio_file.data && (
-          <audio controls>
+          <audio controls className="audio-player">
             <source 
               src={`data:audio/mpeg;base64,${btoa(String.fromCharCode.apply(null, translation.audio_file.data))}`} 
               type="audio/mpeg" 

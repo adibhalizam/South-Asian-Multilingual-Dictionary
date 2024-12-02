@@ -38,31 +38,59 @@
   background-color: white;
 }
 
-.dictionary-box h2 {
-  text-align: center;
-  color: #00274c;
-}
-
 .dictionary-box {
   color: #00274c;
+  text-align: center;
 }
 
 .boxTitle {
-  font-size:x-large;
+  font-size: x-large;
+  margin-left: 8px;
+  border: none; /* Removes box */
+  background: transparent;
+  outline: none;
+  color: #00274c; /* Matches Umich blue */
+  cursor: pointer;
+  padding: 0;
 }
 
+.boxTitle:focus {
+  outline: none; /* Removes outline on focus */
+}
+
+.boxTitle option {
+  color: #000; /* Default text color for options */
+}
 /* Box Content */
 .box-content {
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  justify-content: space-between; /* Push the audio player to the bottom */
+  height: 90%; /* Ensure the container uses full height */
   font-size: 14px;
   color: #333;
+  text-align: center;
+  position: relative; /* Establish context for absolute positioning */
+}
+
+/* Content Text */
+.content-text {
+  margin-bottom: 60px; /* Reserve space for the audio player */
+}
+
+/* Audio Player */
+.audio-player {
+  position: absolute; /* Fix the audio player to the bottom of the container */
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%); /* Center horizontally */
+  max-width: 100%;
+  width: 80%; /* Adjust width as needed */
+  display: block;
 }
 
 .box-content p {
-  margin: 8px 0;
-}
-
-.audio-container {
-  margin-top: 10px;
+  margin: 8px 0; /* Adds consistent spacing between paragraphs */
 }
 
 .image-container img {
