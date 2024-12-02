@@ -145,6 +145,7 @@ const DictionaryPage = () => {
 
   return (
     <div className="dictionary-page">
+      <button className="admin-login-btn">Admin Login</button>
       <h1>South Asian Multilingual Dictionary</h1>
 
       <div className="search-bar-container">
