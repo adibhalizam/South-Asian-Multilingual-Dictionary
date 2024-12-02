@@ -145,7 +145,7 @@ const DictionaryPage = () => {
 
   return (
     <div className="dictionary-page">
-      <button className="admin-login-btn">Admin Login</button>
+      <button className="admin-login-btn" onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Admin Login</button>
       <h1>South Asian Multilingual Dictionary</h1>
 
       <div className="search-bar-container">
