@@ -125,21 +125,21 @@ const DictionaryPage = () => {
             </div>
             <div className="box-content">
               <div className="content-text">
-    <p><strong>Translated Word:</strong></p>
-    <p>{dictionaryData[boxes[boxNum]]?.translated_word}</p>
-    <p><strong>Word Class:</strong></p>
-    <p>{dictionaryData[boxes[boxNum]]?.wordClass}</p>
-    <p><strong>Pronunciation:</strong></p>
-    <p>{dictionaryData[boxes[boxNum]]?.pronunciation}</p>
-    <p><strong>Synonym:</strong></p>
-    <p>{dictionaryData[boxes[boxNum]]?.synonym}</p>
-    <p><strong>Usage Sentence:</strong></p>
-    <p>{dictionaryData[boxes[boxNum]]?.usage_sentence}</p>
-  </div>
-  <audio controls className="audio-player">
-    <source src={dictionaryData[boxes[boxNum]]?.audio} type="audio/mpeg" />
-    Your browser does not support the audio element.
-  </audio>
+                <p><strong>Translated Word:</strong></p>
+                <p>{dictionaryData[boxes[boxNum]]?.translated_word}</p>
+                <p><strong>Word Class:</strong></p>
+                <p>{dictionaryData[boxes[boxNum]]?.wordClass}</p>
+                <p><strong>Pronunciation:</strong></p>
+                <p>{dictionaryData[boxes[boxNum]]?.pronunciation}</p>
+                <p><strong>Synonym:</strong></p>
+                <p>{dictionaryData[boxes[boxNum]]?.synonym}</p>
+                <p><strong>Usage Sentence:</strong></p>
+                <p>{dictionaryData[boxes[boxNum]]?.usage_sentence}</p>
+              </div>
+              <audio controls className="audio-player">
+                <source src={dictionaryData[boxes[boxNum]]?.audio} type="audio/mpeg" />
+                Your browser does not support the audio element.
+              </audio>
             </div>
           </div>
         ))}
