@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import './styles/Dictionary.css';
 
+
 const DictionaryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [language, setLanguage] = useState('English');
@@ -58,6 +59,12 @@ const DictionaryPage = () => {
     setLanguage(e.target.value);
   };
 
+  const handleSearch = () => {
+  console.log("Search clicked for:", searchTerm);
+  // Add your search functionality here
+};
+
+
   const handleBoxLanguageChange = (box, lang) => {
     setBoxes(prevState => ({
       ...prevState,
@@ -73,13 +80,7 @@ const DictionaryPage = () => {
       <h1>Dictionary</h1>
       
       <div className="search-bar-container">
-        <input
-          type="text"
-          placeholder="Search for a word"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
-        
+
         <select onChange={handleLanguageChange} value={language}>
           <option value="English">English</option>
           <option value="Bengali">Bengali</option>
@@ -88,29 +89,57 @@ const DictionaryPage = () => {
           <option value="Persian">Persian</option>
           <option value="Hindi">Hindi</option>
         </select>
+
+        <input
+          type="text"
+          placeholder="Search for a word"
+          value={searchTerm}
+          onChange={handleSearchChange}
+        />
+        
+        <svg onClick={handleSearch} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="icon icon-tabler icons-tabler-outline icon-tabler-search clickable">
+          <path stroke="none" d="M0 0h24v24H0z" fill="none" />
+          <path d="M10 10m-7 0a7 7 0 1 0 14 0a7 7 0 1 0 -14 0" />
+          <path d="M21 21l-6 -6" />
+        </svg>
+        
       </div>
 
       <div className="dictionary-boxes">
         {Object.keys(boxes).map((boxNum) => (
           <div className="dictionary-box" key={boxNum}>
-            <h2>{boxes[boxNum]}</h2>
+            <div className="box-header">
+              <h2>
+                <select
+                  onChange={(e) => handleBoxLanguageChange(boxNum, e.target.value)}
+                  value={boxes[boxNum]}
+                  className="language-selector"
+                >
+                  <option value="Bengali">Bengali</option>
+                  <option value="Urdu">Urdu</option>
+                  <option value="Punjabi">Punjabi</option>
+                  <option value="Persian">Persian</option>
+                  <option value="Hindi">Hindi</option>
+                </select>
+              </h2>
+            </div>
             <div className="box-content">
-              <select onChange={(e) => handleBoxLanguageChange(boxNum, e.target.value)} value={boxes[boxNum]}>
-                <option value="Bengali">Bengali</option>
-                <option value="Urdu">Urdu</option>
-                <option value="Punjabi">Punjabi</option>
-                <option value="Persian">Persian</option>
-                <option value="Hindi">Hindi</option>
-              </select>
-              <p><strong>Translated Word:</strong> {dictionaryData[boxes[boxNum]]?.translated_word}</p>
-              <p><strong>Word Class:</strong> {dictionaryData[boxes[boxNum]]?.wordClass}</p>
-              <p><strong>Pronunciation:</strong> {dictionaryData[boxes[boxNum]]?.pronunciation}</p>
-              <p><strong>Synonym:</strong> {dictionaryData[boxes[boxNum]]?.synonym}</p>
-              <p><strong>Usage Sentence:</strong> {dictionaryData[boxes[boxNum]]?.usage_sentence}</p>
-              <audio controls>
-                <source src={dictionaryData[boxes[boxNum]]?.audio} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
+              <div className="content-text">
+    <p><strong>Translated Word:</strong></p>
+    <p>{dictionaryData[boxes[boxNum]]?.translated_word}</p>
+    <p><strong>Word Class:</strong></p>
+    <p>{dictionaryData[boxes[boxNum]]?.wordClass}</p>
+    <p><strong>Pronunciation:</strong></p>
+    <p>{dictionaryData[boxes[boxNum]]?.pronunciation}</p>
+    <p><strong>Synonym:</strong></p>
+    <p>{dictionaryData[boxes[boxNum]]?.synonym}</p>
+    <p><strong>Usage Sentence:</strong></p>
+    <p>{dictionaryData[boxes[boxNum]]?.usage_sentence}</p>
+  </div>
+  <audio controls className="audio-player">
+    <source src={dictionaryData[boxes[boxNum]]?.audio} type="audio/mpeg" />
+    Your browser does not support the audio element.
+  </audio>
             </div>
           </div>
         ))}

@@ -38,6 +38,14 @@
   background-color: white;
 }
 
+.clickable {
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.clickable:hover {
+  transform: scale(1.5);
+}
 .dictionary-box h2 {
   text-align: center;
   color: #00274c;
@@ -45,16 +53,28 @@
 
 /* Box Content */
 .box-content {
+  display: flex;
+  flex-direction: column; /* Stack content vertically */
+  justify-content: space-between; /* Push audio to the bottom */
+  height: 90%; /* Ensures full box height is used */
   font-size: 14px;
   color: #333;
+  text-align: center;
+}
+
+.content-text {
+  flex: 1; /* Takes up remaining space */
+}
+
+.audio-player {
+  max-width: 100%; /* Ensures the audio player does not overflow */
+  margin-top: auto; /* Keeps it at the bottom */
+  display: block; /* Makes it take up the full width of its container */
+  margin: 10px auto 0; /* Centers the audio player with a top margin */
 }
 
 .box-content p {
-  margin: 8px 0;
-}
-
-.audio-container {
-  margin-top: 10px;
+  margin: 8px 0; /* Adds consistent spacing between paragraphs */
 }
 
 .image-container img {
@@ -135,4 +155,29 @@
 .dictionary-page {
   position: relative; /* Ensure the button is positioned relative to this container */
   padding-top: 50px; /* Add some space at the top for the button */
+}
+
+.box-header h2 {
+  font-size: 2em;
+  margin: 0;
+  color: #00274c; /* Umich Blue */
+}
+
+.language-selector {
+  font-size: 1em;
+  margin-left: 8px;
+  border: none; /* Removes box */
+  background: transparent;
+  outline: none;
+  color: #00274c; /* Matches Umich blue */
+  cursor: pointer;
+  padding: 0;
+}
+
+.language-selector:focus {
+  outline: none; /* Removes outline on focus */
+}
+
+.language-selector option {
+  color: #000; /* Default text color for options */
 }
