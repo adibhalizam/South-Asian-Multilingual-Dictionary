@@ -1,78 +1,163 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './styles/Dictionary.css';
+
+const LANGUAGE_MAP = {
+  1: 'Urdu',
+  2: 'Bengali',
+  3: 'Hindi',
+  4: 'Punjabi',
+  5: 'Tamil',
+  6: 'Persian'
+};
 
 const DictionaryPage = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [language, setLanguage] = useState('English');
-  const [boxes, setBoxes] = useState({ 1: 'Bengali', 2: 'Urdu', 3: 'Punjabi' });
+  const [mainLanguage, setMainLanguage] = useState('English');
+  const [selectedLanguages, setSelectedLanguages] = useState({
+    1: 'Urdu',
+    2: 'Bengali',
+    3: 'Punjabi'
+  });
+  const [dictionaryData, setDictionaryData] = useState([]);
+  const [translations, setTranslations] = useState({});
+  const [errorMessage, setErrorMessage] = useState('');
+  const [lastSearchedWord, setLastSearchedWord] = useState('');
 
-  // Example data (you can replace this with actual data or an API)
-  const dictionaryData = {
-    Bengali: {
-      translated_word: 'স্বাস্থ্য',
-      wordClass: 'Noun',
-      pronunciation: 'Shwasthyo',
-      synonym: 'well-being',
-      usage_sentence: 'স্বাস্থ্য আমাদের সবচেয়ে গুরুত্বপূর্ণ সম্পদ।',
-      audio: 'audio_url_here'
-    },
-    Urdu: {
-      translated_word: 'صحت',
-      wordClass: 'Noun',
-      pronunciation: 'Sehat',
-      synonym: 'health',
-      usage_sentence: 'صحت سب سے بڑا تحفہ ہے۔',
-      audio: 'audio_url_here'
-    },
-    Punjabi: {
-      translated_word: 'ਸਿਹਤ',
-      wordClass: 'Noun',
-      pronunciation: 'Sehat',
-      synonym: 'health',
-      usage_sentence: 'ਸਿਹਤ ਸਭ ਤੋਂ ਵੱਡਾ ਤੋਹਫਾ ਹੈ।',
-      audio: 'audio_url_here'
-    },
-    Persian: {
-      translated_word: 'سلامتی',
-      wordClass: 'Noun',
-      pronunciation: 'Salamati',
-      synonym: 'well-being',
-      usage_sentence: 'سلامتی بزرگترین دارایی است.',
-      audio: 'audio_url_here'
-    },
-    Hindi: {
-      translated_word: 'स्वास्थ्य',
-      wordClass: 'Noun',
-      pronunciation: 'Swasthya',
-      synonym: 'health',
-      usage_sentence: 'स्वास्थ्य सबसे बड़ी संपत्ति है।',
-      audio: 'audio_url_here'
+  // Fetch dictionary data from backend
+  useEffect(() => {
+    const fetchDictionaryData = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/words');
+        if (!response.ok) throw new Error('Failed to fetch data');
+        const data = await response.json();
+        setDictionaryData(data);
+      } catch (error) {
+        setErrorMessage('Error fetching dictionary data. Please try again later.');
+        console.error(error);
+      }
+    };
+
+    fetchDictionaryData();
+  }, []);
+
+  // Update translations based on search term and selected languages
+  const handleTranslate = () => {
+    // Find the translation across all languages
+    const foundWord = dictionaryData.find((item) => {
+      // Check if the search term matches English or any translation
+      const translations = Object.values(item.translations);
+      return item.english_word.toLowerCase() === searchTerm.toLowerCase() ||
+             translations.some(
+               t => t.translated_word.toLowerCase() === searchTerm.toLowerCase()
+             );
+    });
+
+    if (foundWord) {
+      const newTranslations = {};
+      
+      // Iterate through selected languages
+      Object.keys(selectedLanguages).forEach((boxId) => {
+        const selectedLang = selectedLanguages[boxId];
+        
+        // Find the translation ID for the selected language
+        const translationId = Object.keys(LANGUAGE_MAP).find(
+          key => LANGUAGE_MAP[key] === selectedLang
+        );
+
+        // Get the translation using the translation ID
+        const languageTranslation = foundWord.translations[translationId];
+
+        newTranslations[boxId] = languageTranslation || null;
+      });
+
+      setTranslations(newTranslations);
+      setLastSearchedWord(searchTerm);
+      setErrorMessage(Object.values(newTranslations).every(t => t === null) 
+        ? 'No translations found for the selected languages.' 
+        : '');
+    } else {
+      setTranslations({});
+      setErrorMessage('Word not found. Please try another search.');
     }
   };
 
+  // Handle changes to the search term
   const handleSearchChange = (e) => {
     setSearchTerm(e.target.value);
+    setErrorMessage(''); // Clear any previous error message
   };
 
-  const handleLanguageChange = (e) => {
-    setLanguage(e.target.value);
+  // Handle changes to the main language dropdown
+  const handleMainLanguageChange = (e) => {
+    setMainLanguage(e.target.value);
   };
 
-  const handleBoxLanguageChange = (box, lang) => {
-    setBoxes(prevState => ({
-      ...prevState,
-      [box]: lang
-    }));
+  // Handle changes in the translation boxes
+  const handleBoxLanguageChange = (boxId, lang) => {
+    setSelectedLanguages((prev) => ({ ...prev, [boxId]: lang }));
+
+    // If a word has been previously searched, update the translations
+    if (lastSearchedWord) {
+      const foundWord = dictionaryData.find((item) => {
+        const translations = Object.values(item.translations);
+        return item.english_word.toLowerCase() === lastSearchedWord.toLowerCase() ||
+               translations.some(
+                 t => t.translated_word.toLowerCase() === lastSearchedWord.toLowerCase()
+               );
+      });
+
+      if (foundWord) {
+        const translationId = Object.keys(LANGUAGE_MAP).find(
+          key => LANGUAGE_MAP[key] === lang
+        );
+
+        const newTranslations = { ...translations };
+        newTranslations[boxId] = foundWord.translations[translationId] || null;
+        setTranslations(newTranslations);
+      }
+    }
+  };
+
+  // Render translation box content
+  const renderTranslationBox = (boxId) => {
+    const translation = translations[boxId];
+    return translation ? (
+      <div>
+        <p><strong>Translated Word:</strong> {translation.translated_word}</p>
+        <p><strong>Word Class:</strong> {translation.word_class}</p>
+        <p><strong>Pronunciation:</strong> {translation.pronunciation}</p>
+        <p><strong>Synonym:</strong> {translation.synonym}</p>
+        <p><strong>Usage Sentence:</strong> {translation.usage_sentence}</p>
+        {translation.audio_file && translation.audio_file.data && (
+          <audio controls>
+            <source 
+              src={`data:audio/mpeg;base64,${btoa(String.fromCharCode.apply(null, translation.audio_file.data))}`} 
+              type="audio/mpeg" 
+            />
+            Your browser does not support the audio element.
+          </audio>
+        )}
+      </div>
+    ) : (
+      <p>No translation available for this language.</p>
+    );
   };
 
   return (
     <div className="dictionary-page">
-      {/* Admin Login Button */}
-      <button className="admin-login-btn">Admin Login</button>
+      <h1>South Asian Multilingual Dictionary</h1>
 
-      <h1>Dictionary</h1>
-      
       <div className="search-bar-container">
+        <select onChange={handleMainLanguageChange} value={mainLanguage}>
+          <option value="English">English</option>
+          <option value="Bengali">Bengali</option>
+          <option value="Urdu">Urdu</option>
+          <option value="Punjabi">Punjabi</option>
+          <option value="Persian">Persian</option>
+          <option value="Hindi">Hindi</option>
+          <option value="Tamil">Tamil</option>
+        </select>
+
         <input
           type="text"
           placeholder="Search for a word"
@@ -80,49 +165,43 @@ const DictionaryPage = () => {
           onChange={handleSearchChange}
         />
         
-        <select onChange={handleLanguageChange} value={language}>
-          <option value="English">English</option>
-          <option value="Bengali">Bengali</option>
-          <option value="Urdu">Urdu</option>
-          <option value="Punjabi">Punjabi</option>
-          <option value="Persian">Persian</option>
-          <option value="Hindi">Hindi</option>
-        </select>
+        <button onClick={handleTranslate}>Translate</button>
       </div>
 
+      {errorMessage && <p className="error-message">{errorMessage}</p>}
+
       <div className="dictionary-boxes">
-        {Object.keys(boxes).map((boxNum) => (
-          <div className="dictionary-box" key={boxNum}>
-            <h2>{boxes[boxNum]}</h2>
-            <div className="box-content">
-              <select onChange={(e) => handleBoxLanguageChange(boxNum, e.target.value)} value={boxes[boxNum]}>
-                <option value="Bengali">Bengali</option>
-                <option value="Urdu">Urdu</option>
-                <option value="Punjabi">Punjabi</option>
-                <option value="Persian">Persian</option>
-                <option value="Hindi">Hindi</option>
-              </select>
-              <p><strong>Translated Word:</strong> {dictionaryData[boxes[boxNum]]?.translated_word}</p>
-              <p><strong>Word Class:</strong> {dictionaryData[boxes[boxNum]]?.wordClass}</p>
-              <p><strong>Pronunciation:</strong> {dictionaryData[boxes[boxNum]]?.pronunciation}</p>
-              <p><strong>Synonym:</strong> {dictionaryData[boxes[boxNum]]?.synonym}</p>
-              <p><strong>Usage Sentence:</strong> {dictionaryData[boxes[boxNum]]?.usage_sentence}</p>
-              <audio controls>
-                <source src={dictionaryData[boxes[boxNum]]?.audio} type="audio/mpeg" />
-                Your browser does not support the audio element.
-              </audio>
-            </div>
+        {Object.keys(selectedLanguages).map((boxId) => (
+          <div className="dictionary-box" key={boxId}>
+            <select
+              className="boxTitle"
+              onChange={(e) => handleBoxLanguageChange(boxId, e.target.value)}
+              value={selectedLanguages[boxId]}
+            >
+              <option value="Urdu">Urdu</option>
+              <option value="Bengali">Bengali</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Punjabi">Punjabi</option>
+              <option value="Persian">Persian</option>
+              <option value="Tamil">Tamil</option>
+            </select>
+            {renderTranslationBox(boxId)}
           </div>
         ))}
       </div>
-
-      {/* Image Display Below the Boxes */}
+      
+      {translations[1] && (
       <div className="image-container">
-        <img src={dictionaryData[language]?.image} alt="Dictionary Image" />
+        <img 
+          src={translations[1].image} 
+          alt="Related to the translated word" 
+          className="dictionary-large-image"
+        />
       </div>
+    )}
+
     </div>
   );
 };
 
 export default DictionaryPage;
-

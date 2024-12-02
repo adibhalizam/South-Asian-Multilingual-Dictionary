@@ -43,6 +43,14 @@
   color: #00274c;
 }
 
+.dictionary-box {
+  color: #00274c;
+}
+
+.boxTitle {
+  font-size:x-large;
+}
+
 /* Box Content */
 .box-content {
   font-size: 14px;
