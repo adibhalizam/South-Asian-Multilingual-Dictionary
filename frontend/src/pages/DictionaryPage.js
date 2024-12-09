@@ -41,17 +41,67 @@ const DictionaryPage = () => {
   }, []);
 
   // Update translations based on search term and selected languages
-  const handleTranslate = () => {
-    // Find the translation across all languages
-    const foundWord = dictionaryData.find((item) => {
-      // Check if the search term matches English or any translation
-      const translations = Object.values(item.translations);
-      return item.english_word.toLowerCase() === searchTerm.toLowerCase() ||
-             translations.some(
-               t => t.translated_word.toLowerCase() === searchTerm.toLowerCase()
-             );
-    });
+  // const handleTranslate = () => {
+  //   // Find the translation across all languages
+  //   const foundWord = dictionaryData.find((item) => {
+  //     // Check if the search term matches English or any translation
+  //     const translations = Object.values(item.translations);
+  //     return item.english_word.toLowerCase() === searchTerm.toLowerCase() ||
+  //            translations.some(
+  //              t => t.translated_word.toLowerCase() === searchTerm.toLowerCase()
+  //            );
+  //   });
 
+  //   if (foundWord) {
+  //     const newTranslations = {};
+      
+  //     // Iterate through selected languages
+  //     Object.keys(selectedLanguages).forEach((boxId) => {
+  //       const selectedLang = selectedLanguages[boxId];
+        
+  //       // Find the translation ID for the selected language
+  //       const translationId = Object.keys(LANGUAGE_MAP).find(
+  //         key => LANGUAGE_MAP[key] === selectedLang
+  //       );
+
+  //       // Get the translation using the translation ID
+  //       const languageTranslation = foundWord.translations[translationId];
+
+  //       newTranslations[boxId] = languageTranslation || null;
+  //     });
+
+  //     setTranslations(newTranslations);
+  //     setLastSearchedWord(searchTerm);
+  //     setErrorMessage(Object.values(newTranslations).every(t => t === null) 
+  //       ? 'No translations found for the selected languages.' 
+  //       : '');
+  //   } else {
+  //     setTranslations({});
+  //     setErrorMessage('Word not found. Please try another search.');
+  //   }
+  // };
+
+  const handleTranslate = () => {
+    // Find the translation across selected language and English
+    const foundWord = dictionaryData.find((item) => {
+      // If main language is English, search in English words
+      if (mainLanguage === 'English') {
+        return item.english_word.toLowerCase() === searchTerm.toLowerCase();
+      }
+      
+      // Find translation ID for the main language
+      const mainLanguageId = Object.keys(LANGUAGE_MAP).find(
+        key => LANGUAGE_MAP[key] === mainLanguage
+      );
+      
+      // Check if search term matches the translation in the main language
+      const translations = item.translations;
+      const mainLanguageTranslation = translations[mainLanguageId];
+      
+      return mainLanguageTranslation && 
+             mainLanguageTranslation.translated_word.toLowerCase() === searchTerm.toLowerCase();
+    });
+  
     if (foundWord) {
       const newTranslations = {};
       
@@ -63,13 +113,13 @@ const DictionaryPage = () => {
         const translationId = Object.keys(LANGUAGE_MAP).find(
           key => LANGUAGE_MAP[key] === selectedLang
         );
-
+  
         // Get the translation using the translation ID
         const languageTranslation = foundWord.translations[translationId];
-
+  
         newTranslations[boxId] = languageTranslation || null;
       });
-
+  
       setTranslations(newTranslations);
       setLastSearchedWord(searchTerm);
       setErrorMessage(Object.values(newTranslations).every(t => t === null) 
@@ -80,6 +130,7 @@ const DictionaryPage = () => {
       setErrorMessage('Word not found. Please try another search.');
     }
   };
+  
 
   // Handle changes to the search term
   const handleSearchChange = (e) => {
