@@ -135,15 +135,15 @@ const Dictionary = () => {
       <div className="dictionary-box-content">
         <div className="dictionary-content-text">
           <p><strong>Translated Word:</strong> </p> 
-          <p> {translation.translated_word}</p>
+          <p> {translation.translated_word || 'N/A'}</p>
           <p><strong>Word Class:</strong></p> 
-          <p> {translation.word_class}</p>
+          <p> {translation.word_class || 'N/A'}</p>
           <p><strong>Pronunciation:</strong></p> 
-          <p> {translation.pronunciation}</p>
+          <p> {translation.pronunciation || 'N/A'}</p>
           <p><strong>Synonym:</strong></p> 
-          <p> {translation.synonym}</p>
+          <p> {translation.synonym || 'N/A'}</p>
           <p><strong>Usage Sentence:</strong></p> 
-          <p> {translation.usage_sentence}</p>
+          <p> {translation.usage_sentence || 'N/A'}</p>
         </div>
 
         {translation.audio_file && translation.audio_file.data && (
