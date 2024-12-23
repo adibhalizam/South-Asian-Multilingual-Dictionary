@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './styles/Dictionary.css';
+import './style/Dictionary.css';
 
 const LANGUAGE_MAP = {
   1: 'Urdu',
@@ -10,7 +10,7 @@ const LANGUAGE_MAP = {
   6: 'Persian'
 };
 
-const DictionaryPage = () => {
+const Dictionary = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [mainLanguage, setMainLanguage] = useState('English');
   const [selectedLanguages, setSelectedLanguages] = useState({
@@ -39,47 +39,6 @@ const DictionaryPage = () => {
 
     fetchDictionaryData();
   }, []);
-
-  // Update translations based on search term and selected languages
-  // const handleTranslate = () => {
-  //   // Find the translation across all languages
-  //   const foundWord = dictionaryData.find((item) => {
-  //     // Check if the search term matches English or any translation
-  //     const translations = Object.values(item.translations);
-  //     return item.english_word.toLowerCase() === searchTerm.toLowerCase() ||
-  //            translations.some(
-  //              t => t.translated_word.toLowerCase() === searchTerm.toLowerCase()
-  //            );
-  //   });
-
-  //   if (foundWord) {
-  //     const newTranslations = {};
-      
-  //     // Iterate through selected languages
-  //     Object.keys(selectedLanguages).forEach((boxId) => {
-  //       const selectedLang = selectedLanguages[boxId];
-        
-  //       // Find the translation ID for the selected language
-  //       const translationId = Object.keys(LANGUAGE_MAP).find(
-  //         key => LANGUAGE_MAP[key] === selectedLang
-  //       );
-
-  //       // Get the translation using the translation ID
-  //       const languageTranslation = foundWord.translations[translationId];
-
-  //       newTranslations[boxId] = languageTranslation || null;
-  //     });
-
-  //     setTranslations(newTranslations);
-  //     setLastSearchedWord(searchTerm);
-  //     setErrorMessage(Object.values(newTranslations).every(t => t === null) 
-  //       ? 'No translations found for the selected languages.' 
-  //       : '');
-  //   } else {
-  //     setTranslations({});
-  //     setErrorMessage('Word not found. Please try another search.');
-  //   }
-  // };
 
   const handleTranslate = () => {
     // Find the translation across selected language and English
@@ -173,8 +132,8 @@ const DictionaryPage = () => {
   const renderTranslationBox = (boxId) => {
     const translation = translations[boxId];
     return translation ? (
-      <div className="box-content">
-        <div className="content-text">
+      <div className="dictionary-box-content">
+        <div className="dictionary-content-text">
           <p><strong>Translated Word:</strong> </p> 
           <p> {translation.translated_word}</p>
           <p><strong>Word Class:</strong></p> 
@@ -188,7 +147,7 @@ const DictionaryPage = () => {
         </div>
 
         {translation.audio_file && translation.audio_file.data && (
-          <audio controls className="audio-player">
+          <audio controls className="dictionary-audio-player">
             <source 
               src={`data:audio/mpeg;base64,${btoa(String.fromCharCode.apply(null, translation.audio_file.data))}`} 
               type="audio/mpeg" 
@@ -204,10 +163,9 @@ const DictionaryPage = () => {
 
   return (
     <div className="dictionary-page">
-      <button className="admin-login-btn" onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Admin Login</button>
-      <h1>South Asian Multilingual Dictionary</h1>
+      <h1>Multilingual Dictionary</h1>
 
-      <div className="search-bar-container">
+      <div className="dictionary-search-bar-container">
         <select onChange={handleMainLanguageChange} value={mainLanguage}>
           <option value="English">English</option>
           <option value="Bengali">Bengali</option>
@@ -228,13 +186,13 @@ const DictionaryPage = () => {
         <button onClick={handleTranslate}>Translate</button>
       </div>
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {errorMessage && <p className="dictionary-error-message">{errorMessage}</p>}
 
       <div className="dictionary-boxes">
         {Object.keys(selectedLanguages).map((boxId) => (
           <div className="dictionary-box" key={boxId}>
             <select
-              className="boxTitle"
+              className="dictionary-boxTitle"
               onChange={(e) => handleBoxLanguageChange(boxId, e.target.value)}
               value={selectedLanguages[boxId]}
             >
@@ -251,7 +209,7 @@ const DictionaryPage = () => {
       </div>
       
       {translations[1] && (
-      <div className="image-container">
+      <div className="dictionary-image-container">
         <img 
           src={translations[1].image} 
           alt="Related to the translated word" 
@@ -259,9 +217,13 @@ const DictionaryPage = () => {
         />
       </div>
     )}
-
+    <button className="login-button" onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Admin Login</button>
     </div>
   );
 };
 
-export default DictionaryPage;
+export default Dictionary;
+
+
+
+
