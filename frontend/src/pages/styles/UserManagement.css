@@ -23,7 +23,7 @@ body {
   margin-bottom: 20px;
 }
 
-button {
+.back-button {
   padding: 10px 15px;
   font-size: 16px;
   background-color: #00274d;
@@ -34,7 +34,7 @@ button {
   transition: background-color 0.3s ease;
 }
 
-button:hover {
+.back-button:hover {
   background-color: #ffcb05;
 }
 
@@ -92,7 +92,7 @@ button:hover {
 /* Input styles */
 input[type="email"] {
   padding: 10px;
-  width: 100%;
+  width: 90%;
   font-size: 16px;
   border-radius: 5px;
   border: 1px solid #ddd;
@@ -128,4 +128,69 @@ button.add-more:hover {
 .language-admin-section input[type="email"] {
   margin-top: 5px;
   margin-bottom: 10px;
+}
+
+/* Tabs container */
+.tabs-container {
+  display: flex;
+  flex-direction: column;
+}
+
+.tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.tab {
+  padding: 10px 15px;
+  background-color: #00274d;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+.tab:hover {
+  background-color: #ffcb05;
+}
+
+.tab.active {
+  background-color: #ffcb05;
+  color: #00274d;
+}
+
+.tab-pane {
+  display: none;
+}
+
+.tab-pane.active {
+  display: block;
+}
+
+/* Language Admin Section */
+.language-admin {
+  margin-bottom: 20px;
+}
+
+.language-admin h3 {
+  margin-top: 0;
+  color: #00274d;
+  font-size: 20px;
+}
+
+/* FAB for add buttons */
+button.add-more {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #00274d;
+  color: white;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+button.add-more:hover {
+  background-color: #ffcb05;
 }
