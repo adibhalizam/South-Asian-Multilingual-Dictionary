@@ -11,22 +11,46 @@ const NewWord = ({ onClose, onSubmitWord, onImportFile }) => {
     pronunciation: '',
     synonym: '',
     usageSentence: '',
-    audio: '',
-    image: '',
+    audio: null, // Now storing the audio file
+    image: null, // Now storing the image file
   });
   const [file, setFile] = useState(null);
+  const [error, setError] = useState('');
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setWordData((prev) => ({ ...prev, [name]: value }));
   };
 
-  const handleFileChange = (e) => {
-    setFile(e.target.files[0]);
+  const handleFileChange = (e, type) => {
+    const selectedFile = e.target.files[0];
+
+    if (type === 'audio') {
+      // Validate audio file (mp3, wav, ogg)
+      if (selectedFile && !selectedFile.type.startsWith('audio')) {
+        setError('Please select a valid audio file (mp3, wav, ogg).');
+        return;
+      }
+      setWordData((prev) => ({ ...prev, audio: selectedFile }));
+    } else if (type === 'image') {
+      // Validate image file (jpg, jpeg, png, gif)
+      if (selectedFile && !selectedFile.type.startsWith('image')) {
+        setError('Please select a valid image file (jpg, jpeg, png, gif).');
+        return;
+      }
+      setWordData((prev) => ({ ...prev, image: selectedFile }));
+    }
+
+    // Clear error if a valid file is selected
+    setError('');
   };
 
   const handleAddWordSubmit = (e) => {
     e.preventDefault();
+    if (!wordData.audio || !wordData.image) {
+      setError('Both audio and image files are required.');
+      return;
+    }
     onSubmitWord(wordData); // Pass word data to parent handler
     onClose(); // Close the popup after submission
   };
@@ -38,7 +62,7 @@ const NewWord = ({ onClose, onSubmitWord, onImportFile }) => {
   };
 
   return (
-    <div className="new-word-modal">
+    <div className="new-word">
       <button className="close-button" onClick={onClose}>X</button>
       <div className="tabs">
         <button
@@ -129,36 +153,48 @@ const NewWord = ({ onClose, onSubmitWord, onImportFile }) => {
               onChange={handleInputChange}
             />
           </label>
+          
           <label>
-            Audio URL:
+            Audio File:
             <input
-              type="text"
-              name="audio"
-              value={wordData.audio}
-              onChange={handleInputChange}
+              type="file"
+              accept="audio/*"
+              onChange={(e) => handleFileChange(e, 'audio')}
             />
           </label>
           <label>
-            Image URL:
+            Image File:
             <input
-              type="text"
-              name="image"
-              value={wordData.image}
-              onChange={handleInputChange}
+              type="file"
+              accept="image/*"
+              onChange={(e) => handleFileChange(e, 'image')}
             />
           </label>
+
+          {error && <div className="error-message">{error}</div>}
+
           <button type="submit" className="submit-button">Add Word</button>
         </form>
       )}
 
       {activeTab === 'importFile' && (
         <form onSubmit={handleFileImportSubmit} className="import-file-form">
-          <label>
-            Upload Excel File:
-            <input type="file" accept=".xlsx, .xls" onChange={handleFileChange} required />
+          <label htmlFor="file-upload">Upload Excel File:</label>
+          <input
+            type="file"
+            id="file-upload"
+            accept=".xlsx, .xls"
+            onChange={handleFileChange}
+            required
+          />
+          <label htmlFor="file-upload" className="file-label">
+            Choose File
           </label>
-          <button type="submit" className="submit-button">Import File</button>
+          <button type="submit" className="submit-button">
+            Import File
+          </button>
         </form>
+
       )}
     </div>
   );

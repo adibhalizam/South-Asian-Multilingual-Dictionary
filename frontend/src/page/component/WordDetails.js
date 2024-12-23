@@ -1,4 +1,3 @@
-// src/page/component/WordDetailsBox.js
 import React, { useState } from 'react';
 import '../style/WordDetails.css';
 
@@ -24,8 +23,9 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
 
   return (
     <div className="word-details-box">
-      <button onClick={onClose} className="close-button">X</button>
-      <h2>Edit Word Details</h2>
+      <button onClick={onClose} className="word-details-close-button">X</button>
+      <div className="word-details">
+        <h2>Edit Word Details</h2>
       
       <label>
         Word:
@@ -65,7 +65,7 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
       </label>
       <label>
         Usage Sentence:
-        <input
+        <textarea
           type="text"
           name="usageSentence"
           value={editableWord.usageSentence}
@@ -82,9 +82,10 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
         />
       </label>
 
-      <div className="actions">
-        <button onClick={handleUpdate} className="update-button">Update</button>
-        <button onClick={handleDelete} className="delete-button">Delete</button>
+      </div>
+      <div className="word-details-actions">
+        <button onClick={handleUpdate} className="word-details-update-button">Update</button>
+        <button onClick={handleDelete} className="word-details-delete-button">Delete</button>
       </div>
     </div>
   );
