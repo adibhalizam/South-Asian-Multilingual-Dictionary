@@ -7,9 +7,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    // Perform logout logic here (e.g., clearing user session)
-    alert('Logged out successfully!');
-    navigate('/'); // Redirect to home or login page after logout
+    navigate('/'); 
   };
 
   return (
@@ -31,9 +29,9 @@ const Navbar = () => {
           </NavLink>
         </li>
         <li>
-          <button className="logout-button" onClick={handleLogout}>
+          <NavLink to="/" activeClassName="active" className="navbar-link">
             Logout
-          </button>
+          </NavLink>
         </li>
       </ul>
     </nav>
