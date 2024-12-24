@@ -3,6 +3,16 @@ import './style/Content.css';
 import WordDetailsBox from './component/WordDetails';
 import NewWord from './component/NewWord';
 
+// Language mapping that matches database values
+const LANGUAGE_MAP = {
+  1: 'bengali',
+  2: 'hindi',
+  3: 'persian',
+  4: 'punjabi',
+  5: 'tamil',
+  6: 'urdu'
+};
+
 const Content = () => {
   const [dictionaryData, setDictionaryData] = useState([]);
   const [currentPage, setCurrentPage] = useState(1);
@@ -11,18 +21,62 @@ const Content = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedWord, setSelectedWord] = useState(null);
   const [showNewWordModal, setShowNewWordModal] = useState(false);
+  const [userAccess, setUserAccess] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/auth/session', {
+          credentials: 'include' // Important for session cookies
+        });
+        const data = await response.json();
+        
+        if (!data.authenticated) {
+          window.location.href = '/';
+          return;
+        }
+        
+        setUserAccess({
+          role: data.role,
+          languages: data.languages
+        });
+      } catch (error) {
+        console.error('Auth check failed:', error);
+        window.location.href = '/';
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
+  const canEditTranslation = (languageIndex) => {
+    if (!userAccess) return false;
+    if (userAccess.role === 'manager') return true;
+    if (userAccess.role === 'sysadmin') {
+      const language = LANGUAGE_MAP[languageIndex];
+      return userAccess.languages.includes(language);
+    }
+    return false;
+  };
+
+  const canEditEnglishWord = () => {
+    return userAccess?.role === 'manager';
+  };
 
   const handleAddWord = async (newWord) => {
     try {
       // Check if word exists
-      const checkResponse = await fetch(`http://localhost:3001/api/words/check/${newWord.englishWord}`);
+      const checkResponse = await fetch(`http://localhost:3001/api/words/check/${encodeURIComponent(newWord.englishWord)}`);
       const { exists } = await checkResponse.json();
       
       if (exists) {
         setErrorMessage('Word already exists in the dictionary');
         return;
       }
-
+  
       // Create new word with translations
       const response = await fetch('http://localhost:3001/api/words', {
         method: 'POST',
@@ -32,33 +86,23 @@ const Content = () => {
           picture: newWord.picture || null
         }),
       });
-
+  
       if (!response.ok) throw new Error('Failed to add word');
-
+  
       const savedWord = await response.json();
-      setDictionaryData(prevData => [...prevData, savedWord]);
+      
+      // Refresh the dictionary data
+      const refreshResponse = await fetch('http://localhost:3001/api/content/words');
+      const refreshedData = await refreshResponse.json();
+      setDictionaryData(refreshedData);
+      
       setShowNewWordModal(false);
+      setErrorMessage('');
     } catch (error) {
       console.error('Error adding word:', error);
       setErrorMessage('Failed to add word. Please try again.');
     }
   };
-
-  // useEffect(() => {
-  //   const fetchDictionaryData = async () => {
-  //     try {
-  //       const response = await fetch('http://localhost:3001/api/words');
-  //       if (!response.ok) throw new Error('Failed to fetch data');
-  //       const data = await response.json();
-  //       setDictionaryData(data);
-  //     } catch (error) {
-  //       setErrorMessage('Error fetching dictionary data. Please try again later.');
-  //       console.error(error);
-  //     }
-  //   };
-
-  //   fetchDictionaryData();
-  // }, []);
 
   useEffect(() => {
     const fetchDictionaryData = async () => {
@@ -86,6 +130,15 @@ const Content = () => {
   // };
   const handleWordClick = async (word, colIndex, translationId) => {
     try {
+      // Check permissions first
+      if (colIndex === 0 && !canEditEnglishWord()) {
+        setErrorMessage('You do not have permission to edit English words');
+        return;
+      }
+      if (colIndex > 0 && !canEditTranslation(colIndex)) {
+        setErrorMessage(`You do not have permission to edit ${LANGUAGE_MAP[colIndex]} translations`);
+        return;
+      }
       if (colIndex === 0) {
         const response = await fetch(`http://localhost:3001/api/words/${word.word_id}`);
         const wordData = await response.json();
@@ -134,6 +187,8 @@ const Content = () => {
       setErrorMessage('Failed to fetch details');
     }
   };
+
+  if (loading) return <div>Loading...</div>;
 
   const handleUpdate = async (updatedWord) => {
     try {

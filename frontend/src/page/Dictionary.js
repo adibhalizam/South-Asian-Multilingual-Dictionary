@@ -23,6 +23,37 @@ const Dictionary = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [lastSearchedWord, setLastSearchedWord] = useState('');
 
+  // In Dictionary.js
+  useEffect(() => {
+    // Check if there's an error parameter in the URL
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    
+    if (error === 'unauthorized') {
+      setErrorMessage('You do not have permission to access the admin area.');
+      return;
+    }
+    
+    // Check if user is already authenticated
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/auth/session', {
+          credentials: 'include' // Important for session cookies
+        });
+        const data = await response.json();
+        
+        if (data.authenticated) {
+          // If user is authenticated, redirect to content page
+          window.location.href = '/content';
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      }
+    };
+
+    checkAuth();
+  }, []);
+
   // Fetch dictionary data from backend
   useEffect(() => {
     const fetchDictionaryData = async () => {

@@ -9,8 +9,22 @@ const GoogleStrategy = require('passport-google-oauth20').Strategy;
 
 const app = express();
 app.use(cors());
+app.use(cors({
+  origin: 'http://localhost:3000',
+  credentials: true
+}));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(session({ 
+  secret: 'secret', 
+  resave: false, 
+  saveUninitialized: false,
+  cookie: {
+    secure: false, // set to true if using https
+    sameSite: 'lax',
+    maxAge: 24 * 60 * 60 * 1000 // 24 hours
+  }
+}));
 
 // Database Connection
 const connection = mysql.createConnection({
@@ -72,16 +86,6 @@ router.get('/api/test-connection', (req, res) => {
     res.send(`Database test successful: ${results[0].solution}`);
   });
 });
-
-// router.get('/api/words', (req, res) => {
-//   connection.query('SELECT * FROM words', (err, results) => {
-//     if (err) {
-//       console.error('Error executing query:', err);
-//       return res.status(500).send('Database query error');
-//     }
-//     res.json(results);
-//   });
-// });
 
 router.get('/api/words', (req, res) => {
   connection.query(
@@ -419,6 +423,90 @@ router.put('/api/words/:wordId', (req, res) => {
   );
 });
 
+//create new word
+// Check if word exists
+router.get('/api/words/check/:word', (req, res) => {
+  const word = req.params.word;
+  
+  connection.query(
+    'SELECT EXISTS(SELECT 1 FROM words WHERE english_word = ?) as exists',
+    [word],
+    (err, results) => {
+      if (err) {
+        console.error('Error checking word:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      res.json({ exists: results[0].exists === 1 });
+    }
+  );
+});
+
+// Create new word with default translations
+router.post('/api/words', (req, res) => {
+  const { englishWord, picture } = req.body;
+  
+  connection.beginTransaction(err => {
+    if (err) {
+      return res.status(500).json({ error: 'Transaction error' });
+    }
+
+    // Insert the English word
+    connection.query(
+      'INSERT INTO words (english_word, picture) VALUES (?, ?)',
+      [englishWord, picture],
+      (err, result) => {
+        if (err) {
+          return connection.rollback(() => {
+            res.status(500).json({ error: 'Failed to create word' });
+          });
+        }
+
+        const wordId = result.insertId;
+        
+        // Create default translations for all languages (1 through 6)
+        const translationValues = [1, 2, 3, 4, 5, 6].map(langId => [
+          wordId,
+          langId,
+          'N/A',
+          null,
+          null,
+          null,
+          null,
+          null
+        ]);
+
+        connection.query(
+          `INSERT INTO translations 
+           (word_id, translation_id, translated_word, word_class, pronunciation, synonym, usage_sentence, audio_file)
+           VALUES ?`,
+          [translationValues],
+          (err) => {
+            if (err) {
+              return connection.rollback(() => {
+                res.status(500).json({ error: 'Failed to create translations' });
+              });
+            }
+
+            connection.commit(err => {
+              if (err) {
+                return connection.rollback(() => {
+                  res.status(500).json({ error: 'Commit error' });
+                });
+              }
+              res.json({ 
+                word_id: wordId,
+                english_word: englishWord,
+                picture: picture,
+                translations: {}
+              });
+            });
+          }
+        );
+      }
+    );
+  });
+});
+
 //USER MANAGEMENT API
 // Get all users
 router.get('/api/users', (req, res) => {
@@ -549,18 +637,19 @@ router.delete('/api/users/:email', (req, res) => {
   });
 });
 
+// Check if user exists endpoint
 router.get('/api/users/check/:email', (req, res) => {
   const email = req.params.email;
   
   connection.query(
-    'SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) as exists',
+    'SELECT EXISTS(SELECT 1 FROM users WHERE email = ?) as user_exists',  // Changed 'exists' to 'user_exists'
     [email],
     (err, results) => {
       if (err) {
         console.error('Error checking email:', err);
         return res.status(500).json({ error: 'Database error' });
       }
-      res.json({ exists: results[0].exists === 1 });
+      res.json({ exists: results[0].user_exists === 1 });
     }
   );
 });
@@ -575,39 +664,130 @@ router.get('/auth/google', passport.authenticate('google', {
   prompt: 'select_account',
 }));
 
+// Helper function to check user access
+const checkUserAccess = async (email) => {
+  return new Promise((resolve, reject) => {
+    connection.query(
+      `SELECT u.email, u.role, GROUP_CONCAT(sl.language) as languages 
+       FROM users u 
+       LEFT JOIN sysadmin_languages sl ON u.email = sl.email 
+       WHERE u.email = ?
+       GROUP BY u.email, u.role`,
+      [email],
+      (err, results) => {
+        if (err) reject(err);
+        resolve(results[0] || null);
+      }
+    );
+  });
+};
+
+// Middleware to check authentication
+const checkAuth = (req, res, next) => {
+  if (!req.session.userRole) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+  next();
+};
+
+// Middleware to check manager role
+const checkManager = (req, res, next) => {
+  if (req.session.userRole !== 'manager') {
+    return res.status(403).json({ error: 'Forbidden: Manager access required' });
+  }
+  next();
+};
+
+// Middleware to check language access for sysadmin
+const checkLanguageAccess = async (req, res, next) => {
+  if (req.session.userRole === 'manager') {
+    return next(); // Managers have access to all languages
+  }
+
+  if (req.session.userRole !== 'sysadmin') {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+
+  // For translation updates, check if sysadmin has access to the language
+  if (req.params.translationId) {
+    try {
+      const [translation] = await connection.promise().query(
+        'SELECT translation_id FROM translations WHERE translations_id = ?',
+        [req.params.translationId]
+      );
+
+      if (!translation.length) {
+        return res.status(404).json({ error: 'Translation not found' });
+      }
+
+      const languageId = translation[0].translation_id;
+      const language = LANGUAGE_MAP[languageId].toLowerCase();
+
+      if (!req.session.languages.includes(language)) {
+        return res.status(403).json({ error: 'Forbidden: No access to this language' });
+      }
+    } catch (error) {
+      console.error('Error checking language access:', error);
+      return res.status(500).json({ error: 'Server error' });
+    }
+  }
+
+  next();
+};
+
+// Update Google callback route
 router.get('/auth/google/callback',
   passport.authenticate('google', { failureRedirect: '/' }),
-  (req, res) => {
-    res.redirect('/node/welcome');
+  async (req, res) => {
+    try {
+      const userEmail = req.user.emails[0].value;
+      const userAccess = await checkUserAccess(userEmail);
+
+      if (!userAccess) {
+        // No access - clear session and redirect
+        req.logout((err) => {
+          if (err) console.error(err);
+          res.redirect('http://localhost:3000?error=unauthorized');
+        });
+        return;
+      }
+
+      // Store user info in session
+      req.session.userEmail = userEmail;
+      req.session.userRole = userAccess.role;
+      req.session.languages = userAccess.languages ? userAccess.languages.split(',') : [];
+      
+      // Set proper CORS headers
+      res.header('Access-Control-Allow-Credentials', 'true');
+      res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+      
+      // Redirect to content management page
+      res.redirect('http://localhost:3000/content');
+    } catch (error) {
+      console.error('Auth error:', error);
+      res.redirect('http://localhost:3000?error=system');
+    }
   }
 );
 
-router.get('/welcome', (req, res) => {
-  if (!req.user) {
-    return res.redirect('/');
+// Add new endpoint to check current user's session
+router.get('/api/auth/session', (req, res) => {
+  if (!req.session.userRole) {
+    res.json({ authenticated: false });
+    return;
   }
-  res.send(`
-    <h1>Welcome ${req.user.displayName}</h1>
-    <p>Email: ${req.user.emails[0].value}</p>
-    <a href="/logout">Logout</a>
-  `);
-});
 
-router.get('/logout', (req, res) => {
-  req.logout((err) => {
-    if (err) return next(err);
-
-    req.session.destroy(() => {
-      const googleLogoutURL = `https://accounts.google.com/Logout?continue=https://appengine.google.com/_ah/logout?continue=${encodeURIComponent('http://localhost:3000')}`;
-      res.redirect(googleLogoutURL);
-    });
+  res.json({
+    authenticated: true,
+    email: req.session.userEmail,
+    role: req.session.userRole,
+    languages: req.session.languages
   });
 });
 
-router.get('/login', (req, res) => {
-  res.send('<h1>Login with Google</h1><a href="/node/auth/google">Login</a>');
-});
 
+
+//Server
 // Apply the `/node` prefix to the database routes
 // app.use('/node', router);
 app.use('/', router);
@@ -617,3 +797,42 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+
+
+
+
+
+// router.get('/auth/google/callback',
+//   passport.authenticate('google', { failureRedirect: '/' }),
+//   (req, res) => {
+//     res.redirect('/node/welcome');
+//   }
+// );
+
+// router.get('/welcome', (req, res) => {
+//   if (!req.user) {
+//     return res.redirect('/');
+//   }
+//   res.send(`
+//     <h1>Welcome ${req.user.displayName}</h1>
+//     <p>Email: ${req.user.emails[0].value}</p>
+//     <a href="/logout">Logout</a>
+//   `);
+// });
+
+// router.get('/logout', (req, res) => {
+//   req.logout((err) => {
+//     if (err) return next(err);
+
+//     req.session.destroy(() => {
+//       const googleLogoutURL = `https://accounts.google.com/Logout?continue=https://appengine.google.com/_ah/logout?continue=${encodeURIComponent('http://localhost:3000')}`;
+//       res.redirect(googleLogoutURL);
+//     });
+//   });
+// });
+
+// router.get('/login', (req, res) => {
+//   res.send('<h1>Login with Google</h1><a href="/node/auth/google">Login</a>');
+// });
+
