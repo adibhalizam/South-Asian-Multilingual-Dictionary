@@ -14,7 +14,7 @@ const Layout = ({ children }) => {
     <div className="App" style={{ display: 'flex' }}>
       {/* Conditionally render Navbar based on the current route */}
       {location.pathname !== '/' && <Navbar />} 
-
+      
       <div style={{ marginLeft: location.pathname !== '/' ? '200px' : '0', padding: '10px', width: '100%' }}>
         {/* Content area with left margin if navbar is displayed */}
         {children}
