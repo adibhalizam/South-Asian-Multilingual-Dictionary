@@ -14,7 +14,7 @@ const Content = () => {
 
   const handleAddWord = (newWord) => {
     // Save the new word to the backend
-    fetch('http://localhost:3001/api/words', {
+    fetch('http://localhost:3001/api/new-words', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(newWord),
@@ -27,7 +27,6 @@ const Content = () => {
   };
 
   const handleImportFile = (file) => {
-    // Process the uploaded file (e.g., send it to the backend)
     const formData = new FormData();
     formData.append('file', file);
 
@@ -41,7 +40,7 @@ const Content = () => {
       })
       .catch((error) => console.error('Error importing file:', error));
   };
-  
+
   useEffect(() => {
     const fetchDictionaryData = async () => {
       try {
@@ -60,8 +59,7 @@ const Content = () => {
 
   const handleWordClick = (word) => {
     setSelectedWord({
-      id: word.id,
-      word: word.english_word,
+      word: word.translated_word,
       wordClass: word.word_class,
       pronunciation: word.pronunciation,
       synonym: word.synonym,
@@ -72,7 +70,7 @@ const Content = () => {
 
   const handleUpdate = async (updatedWord) => {
     try {
-      const response = await fetch(`http://localhost:3001/api/words/${updatedWord.id}`, {
+      const response = await fetch(`http://localhost:3001/api/new-words/${updatedWord.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(updatedWord),
@@ -125,11 +123,43 @@ const Content = () => {
     setCurrentPage(pageNumber);
   };
 
+const renderPagination = () => {
+  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const pageNumbers = [];
+
+  for (let i = 1; i <= totalPages; i++) {
+    // Add first, last, and surrounding pages
+    if (
+      i === 1 ||
+      i === totalPages ||
+      (i >= currentPage - 2 && i <= currentPage + 2)
+    ) {
+      pageNumbers.push(i);
+    }
+  }
+
+  return pageNumbers.map((pageNum, index, arr) => {
+    const isFirst = pageNum === arr[0];
+    const isLast = pageNum === arr[arr.length - 1];
+
+    return (
+      <span
+        key={pageNum}
+        onClick={() => handlePageChange(pageNum)}
+        className={`page-number ${pageNum === currentPage ? 'active' : ''} ${isFirst ? 'first' : ''} ${isLast ? 'last' : ''}`}
+      >
+        {pageNum}
+      </span>
+    );
+  });
+};
+
+
   return (
     <div className="content-page">
       <h1>Multilingual Dictionary Content</h1>
 
-      {errorMessage && <p className="error-message">{errorMessage}</p>}
+      {errorMessage && <p className="content-error-message">{errorMessage}</p>}
 
       <input
         type="text"
@@ -166,13 +196,32 @@ const Content = () => {
         ))}
       </div>
 
-      <div className="pagination-controls">
-        <button onClick={() => handlePageChange(currentPage - 1)} disabled={currentPage === 1}>
-          Previous
-        </button>
-        <span>Page {currentPage}</span>
-        <button onClick={() => handlePageChange(currentPage + 1)} disabled={indexOfLastItem >= sortedData.length}>
-          Next
+      <div className="content-pagination-container">
+        <div className="content-pagination">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="pagination-button"
+          >
+            Previous
+          </button>
+
+          {renderPagination()}
+
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={indexOfLastItem >= sortedData.length}
+            className="pagination-button"
+          >
+            Next
+          </button>
+        </div>
+
+        <button
+          className="add-word-button"
+          onClick={() => setShowNewWordModal(true)}
+        >
+          + New Word
         </button>
       </div>
 
@@ -184,12 +233,6 @@ const Content = () => {
           onDelete={handleDelete}
         />
       )}
-      <button
-        className="add-word-button"
-        onClick={() => setShowNewWordModal(true)}
-      >
-        + New Word
-      </button>
 
       {showNewWordModal && (
         <NewWord

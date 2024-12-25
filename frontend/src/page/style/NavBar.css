@@ -5,7 +5,7 @@
   position: fixed; /* Fixed positioning on the left side */
   top: 0;
   left: 0;
-  background-color: #f8f9fa; /* Light background color */
+  background-color: #cbdceb; /* Light background color */
   border-right: 1px solid #ddd; /* Right border to separate navbar from content */
   padding-top: 20px; /* Add space at the top */
   box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional shadow for effect */
@@ -13,45 +13,28 @@
 
 .navbar-menu {
   list-style: none; /* Remove list bullets */
-  padding: 0;
+  padding: 20px 0;
   margin: 0;
 }
 
 .navbar-menu li {
-  margin-bottom: 20px; /* Add spacing between menu items */
 }
 
 .navbar-link {
   text-decoration: none;
-  color: #007bff; /* Link color */
+  color: #133e87; /* Link color */
   font-weight: 500;
   display: block; /* Ensure it takes up full width */
-  padding: 10px 20px;
-  border-radius: 5px;
+  padding: 20px 20px;
 }
 
 .navbar-link:hover {
-  background-color: #f1f1f1; /* Highlight on hover */
+  background-color: #f3f3e0; /* Highlight on hover */
 }
 
 .navbar-link.active {
   font-weight: bold;
-  background-color: #e0e0e0; /* Background color for active link */
-  border-left: 4px solid #007bff; /* Active link indication */
-}
-
-.logout-button {
-  width: 100%; /* Ensure the logout button spans full width */
-  padding: 10px 20px;
-  background-color: #dc3545;
-  color: white;
-  border: none;
-  cursor: pointer;
-  font-size: 16px;
-  text-align: center;
-  border-radius: 5px;
-}
-
-.logout-button:hover {
-  background-color: #c82333; /* Hover effect for logout button */
+  color: #f3f3e0;
+  background-color: #133e87; /* Background color for active link */
+  border-right: 4px solid #608bc1; /* Active link indication */
 }
