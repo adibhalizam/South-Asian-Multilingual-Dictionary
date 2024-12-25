@@ -30,8 +30,22 @@ const Navbar = () => {
     checkAuth();
   }, [navigate]);
 
-  const handleLogout = () => {
-    navigate('/'); 
+  const handleLogout = async () => {
+    try {
+      const response = await fetch('http://localhost:3001/api/auth/logout', {
+        method: 'POST',
+        credentials: 'include'
+      });
+      
+      if (response.ok) {
+        // Only navigate after successful logout
+        navigate('/');
+      } else {
+        console.error('Logout failed');
+      }
+    } catch (error) {
+      console.error('Logout error:', error);
+    }
   };
 
   return (
@@ -55,9 +69,9 @@ const Navbar = () => {
           </li>
         )}
         <li>
-          <NavLink to="/" activeClassName="active" className="navbar-link">
-            Logout
-          </NavLink>
+        <button onClick={handleLogout} className="navbar-link">
+          Logout
+        </button>
         </li>
       </ul>
     </nav>

@@ -1,40 +1,59 @@
 /* src/page/style/Navbar.css */
+
+/* src/page/style/NavBar.css */
 .navbar {
-  width: 200px; /* Fixed width for the left sidebar */
-  height: 100vh; /* Full height of the viewport */
-  position: fixed; /* Fixed positioning on the left side */
+  width: 200px;
+  height: 100vh;
+  position: fixed;
   top: 0;
   left: 0;
-  background-color: #cbdceb; /* Light background color */
-  border-right: 1px solid #ddd; /* Right border to separate navbar from content */
-  padding-top: 20px; /* Add space at the top */
-  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); /* Optional shadow for effect */
+  background-color: #cbdceb;
+  border-right: 1px solid #ddd;
+  padding-top: 20px;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
 }
 
 .navbar-menu {
-  list-style: none; /* Remove list bullets */
+  list-style: none;
   padding: 20px 0;
   margin: 0;
 }
 
 .navbar-menu li {
+  width: 100%;
 }
 
 .navbar-link {
   text-decoration: none;
-  color: #133e87; /* Link color */
+  color: #133e87;
   font-weight: 500;
-  display: block; /* Ensure it takes up full width */
+  display: block;
   padding: 20px 20px;
 }
 
+/* Add styles for the button */
+.navbar-menu button.navbar-link {
+  width: 100%;
+  background: none;
+  border: none;
+  text-align: center;
+  cursor: pointer;
+  font-size: inherit;
+  font-family: inherit;
+}
+
 .navbar-link:hover {
-  background-color: #f3f3e0; /* Highlight on hover */
+  background-color: #f3f3e0;
 }
 
 .navbar-link.active {
   font-weight: bold;
   color: #f3f3e0;
-  background-color: #133e87; /* Background color for active link */
-  border-right: 4px solid #608bc1; /* Active link indication */
+  background-color: #133e87;
+  border-right: 4px solid #608bc1;
+}
+
+/* Add hover state for button */
+.navbar-menu button.navbar-link:hover {
+  background-color: #f3f3e0;
 }
