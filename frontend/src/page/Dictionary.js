@@ -23,6 +23,38 @@ const Dictionary = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [lastSearchedWord, setLastSearchedWord] = useState('');
 
+  
+  useEffect(() => {
+    const urlParams = new URLSearchParams(window.location.search);
+    const error = urlParams.get('error');
+    const isLoggingOut = urlParams.get('logout') === 'true';
+    
+    if (error === 'unauthorized') {
+      setErrorMessage('You do not have permission to access the admin area.');
+      return;
+    }
+    
+    // Skip auth check if logging out
+    if (isLoggingOut) return;
+    
+    const checkAuth = async () => {
+      try {
+        const response = await fetch('http://localhost:3001/api/auth/session', {
+          credentials: 'include'
+        });
+        const data = await response.json();
+        
+        if (data.authenticated) {
+          window.location.href = '/content';
+        }
+      } catch (error) {
+        console.error('Auth check failed:', error);
+      }
+    };
+  
+    checkAuth();
+  }, []);
+
   // Fetch dictionary data from backend
   useEffect(() => {
     const fetchDictionaryData = async () => {
