@@ -121,13 +121,33 @@ const Dictionary = () => {
       setErrorMessage('Word not found. Please try another search.');
     }
   };
-  
 
+    // Detect the direction of text
+  const detectDirection = (text) => {
+    const rtlPattern = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+    return rtlPattern.test(text) ? 'rtl' : 'ltr';
+  };
+  
   // Handle changes to the search term
   const handleSearchChange = (e) => {
-    setSearchTerm(e.target.value);
-    setErrorMessage(''); // Clear any previous error message
+  const inputValue = e.target.value;
+
+  // Detect text direction
+    const detectDirection = (text) => {
+    const rtlPattern = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
+    return rtlPattern.test(text) ? 'rtl' : 'ltr';
   };
+
+  const detectedDirection = detectDirection(inputValue);
+
+  // Set the search term and clear error messages
+  setSearchTerm(inputValue);
+  setErrorMessage('');
+
+  // Update the input field direction
+  e.target.setAttribute('dir', detectedDirection);
+};
+
 
   // Handle changes to the main language dropdown
   const handleMainLanguageChange = (e) => {
@@ -208,12 +228,18 @@ const Dictionary = () => {
           <option value="Tamil">Tamil</option>
         </select>
 
-        <input
-          type="text"
-          placeholder="Search for a word"
-          value={searchTerm}
-          onChange={handleSearchChange}
-        />
+       <input
+        type="text"
+        placeholder="Search for a word"
+        value={searchTerm}
+        onChange={(e) => {
+          handleSearchChange(e);
+        }}
+        style={{
+          textAlign: detectDirection(searchTerm) === 'rtl' ? 'right' : 'left',
+        }}
+      />
+
         
         <button onClick={handleTranslate}>Translate</button>
       </div>
