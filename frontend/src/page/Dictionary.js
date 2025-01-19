@@ -128,15 +128,10 @@ const Dictionary = () => {
     return rtlPattern.test(text) ? 'rtl' : 'ltr';
   };
   
+
   // Handle changes to the search term
   const handleSearchChange = (e) => {
   const inputValue = e.target.value;
-
-  // Detect text direction
-    const detectDirection = (text) => {
-    const rtlPattern = /[\u0591-\u07FF\uFB1D-\uFDFD\uFE70-\uFEFC]/;
-    return rtlPattern.test(text) ? 'rtl' : 'ltr';
-  };
 
   const detectedDirection = detectDirection(inputValue);
 
@@ -265,16 +260,18 @@ const Dictionary = () => {
           </div>
         ))}
       </div>
+
       
       {translations[1] && (
-      <div className="dictionary-image-container">
-        <img 
-          src={translations[1].image} 
-          alt="Related to the translated word" 
-          className="dictionary-large-image"
-        />
-      </div>
-    )}
+        <div className="dictionary-image-container">
+          <img 
+            src={translations[1].image} // Use placeholder or default image
+            alt= ""
+            className="dictionary-large-image"
+          />
+        </div>
+      )}
+
     <button className="login-button" onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Admin Login</button>
     </div>
   );
