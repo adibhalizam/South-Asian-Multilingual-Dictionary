@@ -52,6 +52,12 @@ const Content = () => {
     checkAuth();
   }, []);
 
+  // Reset to first page whenever search term changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm]);
+
+
   const canEditTranslation = (languageIndex) => {
     if (!userAccess) return false;
     if (userAccess.role === 'manager') return true;
@@ -300,19 +306,53 @@ const Content = () => {
   }
 };
 
-  const filteredData = dictionaryData.filter(item =>
-    item.english_word.toLowerCase().startsWith(searchTerm.toLowerCase())
-  );
+  // const filteredData = dictionaryData.filter(item =>
+  //   item.english_word.toLowerCase().startsWith(searchTerm.toLowerCase())
+  // );
+
+  // const sortedData = [...filteredData].sort((a, b) =>
+  //   a.english_word.toLowerCase().localeCompare(b.english_word.toLowerCase())
+  // );
+  
+
+  const filteredData = dictionaryData.filter(item => {
+    // If search term is empty, return all items
+    if (!searchTerm) return true;
+    
+    const searchTermLower = searchTerm.toLowerCase();
+    
+    // Check English word
+    if (item.english_word.toLowerCase().includes(searchTermLower)) {
+      return true;
+    }
+    
+    // Check translations
+    return Object.values(item.translations).some(translation => 
+      translation?.translated_word && 
+      translation.translated_word.toLowerCase().includes(searchTermLower)
+    );
+  });
 
   const sortedData = [...filteredData].sort((a, b) =>
     a.english_word.toLowerCase().localeCompare(b.english_word.toLowerCase())
   );
 
+
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = sortedData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+  // const handlePageChange = (pageNumber) => setCurrentPage(pageNumber);
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+    // Scroll to top of table when page changes
+    window.scrollTo(0, 0);
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1); // Reset to first page on new search
+  };
 
   const renderPagination = () => {
     const totalPages = Math.ceil(sortedData.length / itemsPerPage);
@@ -344,7 +384,8 @@ const Content = () => {
         type="text"
         placeholder="Search word"
         value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
+        // onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleSearchChange}
         className="search-bar"
       />
 

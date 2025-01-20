@@ -33,9 +33,10 @@
 
 .content-container {
   display: grid;
+  grid-auto-rows: 60px;
   grid-template-columns: repeat(7, 1fr); /* This creates 7 columns */
   gap: 10px;
-  align-items: center;
+  align-items: start;
 }
 
 .content-header {
