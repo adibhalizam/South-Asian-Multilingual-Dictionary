@@ -5,12 +5,12 @@ import NewWord from './component/NewWord';
 
 // Language mapping that matches database values
 const LANGUAGE_MAP = {
-  1: 'bengali',
-  2: 'hindi',
-  3: 'persian',
+  1: 'urdu',
+  2: 'bengali',
+  3: 'hindi',
   4: 'punjabi',
   5: 'tamil',
-  6: 'urdu'
+  6: 'persian'
 };
 
 const Content = () => {
@@ -66,18 +66,57 @@ const Content = () => {
     return userAccess?.role === 'manager';
   };
 
+  // const handleAddWord = async (newWord) => {
+  //   try {
+  //     // Check if word exists
+  //     const checkResponse = await fetch(`http://localhost:3001/api/words/check/${encodeURIComponent(newWord.englishWord)}`);
+  //     const { exists } = await checkResponse.json();
+      
+  //     if (exists) {
+  //       setErrorMessage('Word already exists in the dictionary');
+  //       return;
+  //     }
+  
+  //     // Create new word with translations
+  //     const response = await fetch('http://localhost:3001/api/words', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         englishWord: newWord.englishWord,
+  //         picture: newWord.picture || null
+  //       }),
+  //     });
+  
+  //     if (!response.ok) throw new Error('Failed to add word');
+  
+  //     const savedWord = await response.json();
+      
+  //     // Refresh the dictionary data
+  //     const refreshResponse = await fetch('http://localhost:3001/api/content/words');
+  //     const refreshedData = await refreshResponse.json();
+  //     setDictionaryData(refreshedData);
+      
+  //     setShowNewWordModal(false);
+  //     setErrorMessage('');
+  //   } catch (error) {
+  //     console.error('Error adding word:', error);
+  //     setErrorMessage('Failed to add word. Please try again.');
+  //   }
+  // };
+
   const handleAddWord = async (newWord) => {
     try {
-      // Check if word exists
-      const checkResponse = await fetch(`http://localhost:3001/api/words/check/${encodeURIComponent(newWord.englishWord)}`);
-      const { exists } = await checkResponse.json();
+      // First check if word exists in current dictionary data
+      const wordExists = dictionaryData.some(
+        item => item.english_word.toLowerCase() === newWord.englishWord.toLowerCase()
+      );
       
-      if (exists) {
-        setErrorMessage('Word already exists in the dictionary');
+      if (wordExists) {
+        setErrorMessage('This word already exists in the dictionary');
         return;
       }
   
-      // Create new word with translations
+      // If word doesn't exist, proceed with adding it
       const response = await fetch('http://localhost:3001/api/words', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -89,10 +128,10 @@ const Content = () => {
   
       if (!response.ok) throw new Error('Failed to add word');
   
-      const savedWord = await response.json();
-      
       // Refresh the dictionary data
-      const refreshResponse = await fetch('http://localhost:3001/api/content/words');
+      const refreshResponse = await fetch('http://localhost:3001/api/content/words', {
+        credentials: 'include'
+      });
       const refreshedData = await refreshResponse.json();
       setDictionaryData(refreshedData);
       
@@ -312,12 +351,12 @@ const Content = () => {
       <div className="content-container">
         <div className="content-header">
           <div>English</div>
+          <div>Urdu</div>
           <div>Bengali</div>
           <div>Hindi</div>
-          <div>Persian</div>
           <div>Punjabi</div>
           <div>Tamil</div>
-          <div>Urdu</div>
+          <div>Persian</div>
         </div>
 
         {/* {currentItems.map((item) => (
