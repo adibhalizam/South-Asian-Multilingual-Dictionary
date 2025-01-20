@@ -429,7 +429,7 @@ router.get('/api/words/check/:word', (req, res) => {
   const word = req.params.word;
   
   connection.query(
-    'SELECT EXISTS(SELECT 1 FROM words WHERE english_word = ?) as exists',
+    'SELECT EXISTS(SELECT 1 FROM words WHERE english_word = ?) as english_exists',
     [word],
     (err, results) => {
       if (err) {
