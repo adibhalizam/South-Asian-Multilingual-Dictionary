@@ -7,7 +7,6 @@ const NewWord = ({ onClose, onSubmitWord }) => {
     englishWord: '',
     picture: null
   });
-  const [previewImage, setPreviewImage] = useState(null);
   const [file, setFile] = useState(null);
   const [error, setError] = useState('');
 
@@ -18,24 +17,12 @@ const NewWord = ({ onClose, onSubmitWord }) => {
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
-    if (file) {
-      if (!file.type.startsWith('image/')) {
-        setError('Please select a valid image file');
-        return;
-      }
-
-      // Create preview
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setPreviewImage(reader.result);
-        setWordData(prev => ({
-          ...prev,
-          picture: reader.result // Store base64 string
-        }));
-      };
-      reader.readAsDataURL(file);
-      setError('');
+    if (file && !file.type.startsWith('image/')) {
+      setError('Please select a valid image file');
+      return;
     }
+    setWordData(prev => ({ ...prev, picture: file }));
+    setError('');
   };
 
   const handleAddWordSubmit = (e) => {
@@ -90,16 +77,6 @@ const NewWord = ({ onClose, onSubmitWord }) => {
             />
           </label>
 
-          {previewImage && (
-            <div className="image-preview">
-              <img 
-                src={previewImage} 
-                alt="Preview" 
-                style={{ maxWidth: '200px', maxHeight: '200px' }}
-              />
-            </div>
-          )}
-          
           {error && <div className="error-message">{error}</div>}
           <button type="submit" className="submit-button">Add Word</button>
         </form>

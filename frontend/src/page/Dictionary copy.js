@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import './style/Dictionary.css';
 
 const LANGUAGE_MAP = {
@@ -20,21 +19,11 @@ const Dictionary = () => {
     3: 'Punjabi'
   });
   const [dictionaryData, setDictionaryData] = useState([]);
-  const [wordId, setCurrentWordId] = useState(null);
   const [translations, setTranslations] = useState({});
   const [errorMessage, setErrorMessage] = useState('');
   const [lastSearchedWord, setLastSearchedWord] = useState('');
-  const [imageError, setImageError] = useState(false);
-  const [previewImage, setPreviewImage] = useState(null);
-  const [isImageLoading, setIsImageLoading] = useState(false);
-  const [hasImage, setHasImage] = useState(false);
 
-  const navigate = useNavigate();
-
-  const handleNavigateToHelp = () => {
-    navigate('/help'); 
-  };
-
+  
   useEffect(() => {
     const urlParams = new URLSearchParams(window.location.search);
     const error = urlParams.get('error');
@@ -70,7 +59,7 @@ const Dictionary = () => {
   useEffect(() => {
     const fetchDictionaryData = async () => {
       try {
-        const response = await fetch('http://localhost:3001/api/content/words');
+        const response = await fetch('http://localhost:3001/api/words');
         if (!response.ok) throw new Error('Failed to fetch data');
         const data = await response.json();
         setDictionaryData(data);
@@ -84,9 +73,6 @@ const Dictionary = () => {
   }, []);
 
   const handleTranslate = () => {
-    setImageError(false);
-    setHasImage(false);
-
     // Find the translation across selected language and English
     const foundWord = dictionaryData.find((item) => {
       // If main language is English, search in English words
@@ -127,28 +113,11 @@ const Dictionary = () => {
   
       setTranslations(newTranslations);
       setLastSearchedWord(searchTerm);
-      setCurrentWordId(foundWord.word_id);
-      console.log("foundWord.word_id");
       setErrorMessage(Object.values(newTranslations).every(t => t === null) 
         ? 'No translations found for the selected languages.' 
         : '');
-
-      // Check if the word has an image by making a HEAD request
-      fetch(`http://localhost:3001/api/words/${foundWord.word_id}/picture`, { method: 'HEAD' })
-        .then(response => {
-          setHasImage(response.ok);
-          setImageError(!response.ok);
-        })
-        .catch(() => {
-          setHasImage(false);
-          setImageError(true);
-        });
-      
     } else {
       setTranslations({});
-      setCurrentWordId(null);
-      setHasImage(false);
-      console.log(wordId)
       setErrorMessage('Word not found. Please try another search.');
     }
   };
@@ -239,51 +208,9 @@ const Dictionary = () => {
     );
   };
 
-  // Add image display section after search results
-  const renderImage = () => {
-    if (!wordId) return null;
-  
-    if (hasImage) {
-      return (
-        <div className="dictionary-image-container">
-          <div className="dictionary-image-wrapper">
-            <img 
-              src={`http://localhost:3001/api/words/${wordId}/picture`}
-              alt="Word illustration"
-              className="dictionary-large-image"
-              onError={() => {
-                setImageError(true);
-                setHasImage(false);
-              }}
-            />
-          </div>
-        </div>
-      );
-    }
-  
-    if (imageError || !hasImage) {
-      return (
-        <div className="dictionary-image-container">
-          <div className="dictionary-image-placeholder">
-            No image available
-          </div>
-        </div>
-      );
-    }
-  
-    return null;
-  };
-
   return (
     <div className="dictionary-page">
-      <div className="dictionary-header">
-        <h1>Multilingual Dictionary</h1>
-
-        {/* Add the "Help" button to navigate */}
-        <button onClick={handleNavigateToHelp} className="help-button">
-          i
-        </button>
-      </div>
+      <h1>Multilingual Dictionary</h1>
 
       <div className="dictionary-search-bar-container">
         <select onChange={handleMainLanguageChange} value={mainLanguage}>
@@ -334,18 +261,16 @@ const Dictionary = () => {
         ))}
       </div>
 
-      {/* {wordId && renderImage()} */}
-      {renderImage()}
       
-      {/* {translations[1] && (
+      {translations[1] && (
         <div className="dictionary-image-container">
           <img 
-            src={translations[2].picture} // Use placeholder or default image
+            src={translations[1].image} // Use placeholder or default image
             alt= ""
             className="dictionary-large-image"
           />
         </div>
-      )} */}
+      )}
 
     <button className="login-button" onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Admin Login</button>
     </div>

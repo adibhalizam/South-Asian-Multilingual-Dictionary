@@ -28,13 +28,10 @@ const App = () => {
     <Router>
       <Routes>
         <Route path="/" element={<Dictionary />} />
+        <Route path="/help" element={<Help />} />
         <Route 
           path="/content" 
           element={<Layout><Content /></Layout>} 
-        />
-        <Route 
-          path="/help" 
-          element={<Layout><Help /></Layout>} 
         />
         <Route 
           path="/settings" 

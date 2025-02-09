@@ -1,43 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 body {
   font-family: "Roboto", Georgia;
   margin: 0;
@@ -57,46 +17,10 @@ body {
   position: relative;
 }
 
-/* Header Container */
-.dictionary-header {
-  display: flex;
-  justify-content: center; /* Center the items horizontally */
-  align-items: center; /* Align the items vertically */
-  gap: 10px; /* Add some space between the title and the button */
-  margin-top: 20px;
-}
-
-/* Title Styling */
-.dictionary-header h1 {
-  font-size: 2.5em;
-  color: #133e87; /* Blue color for the title */
-  font-weight: bold;
-}
-
-/* Help Button Styling */
-.help-button {
-  background-color: #608bc1;
-  color: white;
-  font-size: 1rem;
-  font-weight: bold;
-  width: 25px; /* Set fixed width */
-  height: 25px; /* Set fixed height */
-  border-radius: 50%; /* Make it round */
-  border: none;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  cursor: pointer;
-  transition: background-color 0.3s ease;
-}
-
-.help-button:hover {
-  background-color: #cbdceb; /* Change to a lighter color on hover */
-}
-
-.help-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+.dictionary-page h1 {
+  font-size: 3em;
+  color: #133e87;
+  margin-bottom: 20px;
 }
 
 /*SEARCH BAR*/
@@ -278,80 +202,85 @@ body {
 }
 
 /*IMAGE*/
-/* Image Container and Display Styles */
 .dictionary-image-container {
   display: flex;
-  justify-content: center;
-  align-items: center;
-  background-color: #f3f3f3;
-  border: 2px dashed #cbdceb;
-  border-radius: 12px;
-  width: 100%;
-  max-width: 800px; /* Reduced from 1200px for better presentation */
-  margin: 20px auto;
-  position: relative;
-  overflow: hidden;
-  
-  /* Option 1: Fixed aspect ratio */
-  aspect-ratio: 16 / 9;  /* Standard widescreen ratio */
-  
-  /* Option 2: Fixed height (comment out aspect-ratio above and uncomment below) */
-  /* height: 400px; */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  background-color: #f3f3f3; /* Light gray placeholder background */
+  border: 2px dashed #cbdceb; /* Dashed border for placeholder */
+  border-radius: 12px; /* Rounded corners */
+  width: 100%; /* Make container width 100% for responsiveness */
+  max-width: 1200px; /* Max width for larger screens */
+  height: auto; /* Set height to auto for responsive scaling */
+  aspect-ratio: 2 / 1; /* Maintain aspect ratio (width:height) */
+  margin: 20px auto; /* Center the container */
+  overflow: hidden; /* Prevent image overflow */
+  position: relative; /* For layering if needed */
 }
 
 .dictionary-large-image {
-  width: 100%;
-  height: 100%;
-  object-fit: contain; /* Changed from 'cover' to 'contain' */
-  padding: 16px; /* Add some padding to prevent image from touching borders */
-  background-color: white; /* Optional: adds a white background */
+  width: 100%; /* Make the image responsive */
+  height: 100%; /* Stretch the image to cover the container */
+  object-fit: cover; /* Crop the image to fill the container */
+  border-radius: 12px; /* Match the container's rounded corners */
 }
 
-/* For images that are too tall or too wide */
-.dictionary-image-wrapper {
+/* Placeholder text styling */
+.dictionary-image-container::before {
+  content: "Image not available"; /* Placeholder text */
+  font-size: 1.5rem;
+  color: #a1a1a1; /* Subtle gray text */
+  position: absolute;
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  position: relative;
+  text-align: center;
+  visibility: visible;
+  z-index: 1; /* Ensure placeholder text is above everything */
+  padding: 10px; /* Add some padding to avoid text touching the border */
 }
 
-/* Placeholder styling */
-.dictionary-image-placeholder {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  height: 100%;
-  color: #a1a1a1;
-  font-size: 1.2rem;
-  background-color: #f8f8f8;
+/* Hide placeholder text when an image is present */
+.dictionary-image-container img {
+  z-index: 2; /* Ensure image appears above placeholder text */
 }
 
-/* Responsive adjustments */
+.dictionary-image-container img + ::before {
+  visibility: hidden;
+}
+
+/* Media Queries for Small Screens */
 @media (max-width: 768px) {
   .dictionary-image-container {
-    max-width: 100%;
-    /* Option 1: Keep aspect ratio */
-    aspect-ratio: 4 / 3;  /* Slightly taller ratio for mobile */
-    
-    /* Option 2: Fixed height for mobile */
-    /* height: 300px; */
+    max-width: 100%; /* Full width on smaller screens */
+    height: 400px; /* Fixed height for smaller screens */
+    aspect-ratio: 4 / 3; /* Adjust aspect ratio for better mobile view */
+  }
+
+  .dictionary-large-image {
+    object-fit: contain; /* Ensure the image fits well within the container on small screens */
+  }
+
+  .dictionary-image-container::before {
+    font-size: 1.2rem; /* Smaller placeholder text on mobile */
+    padding: 5px; /* Reduced padding for small screens */
   }
 }
 
 @media (max-width: 480px) {
   .dictionary-image-container {
-    /* Option 1: Even smaller aspect ratio for mobile */
-    aspect-ratio: 1 / 1;  /* Square ratio for very small screens */
-    
-    /* Option 2: Smaller fixed height */
-    /* height: 250px; */
+    height: 300px; /* Even smaller height for very small screens */
   }
-  
+
   .dictionary-large-image {
-    padding: 8px; /* Reduced padding for small screens */
+    object-fit: contain; /* Maintain responsive behavior */
+  }
+
+  .dictionary-image-container::before {
+    font-size: 1rem; /* Even smaller placeholder text */
+    padding: 2px; /* Further reduce padding on small screens */
   }
 }
 

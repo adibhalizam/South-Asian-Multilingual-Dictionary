@@ -26,6 +26,23 @@ app.use(session({
   }
 }));
 
+// Database Connection
+// const connection = mysql.createConnection({
+//   host: 'webapps4-db.miserver.it.umich.edu',
+//   user: 'southasiandictionarydb',
+//   password: 'h8u@lce@EfXK6k!2',
+//   database: 'southasiandictionarydb',
+//   port: 3306,
+// });
+
+// connection.connect((err) => {
+//   if (err) {
+//     console.error('Error connecting to the database:', err.message);
+//     return;
+//   }
+//   console.log('Connected to the database');
+// });
+
 //Database Connection with Idle Timeout handling
 let connection;
 
@@ -108,7 +125,7 @@ router.get('/api/test-connection', (req, res) => {
 
 router.get('/api/words', (req, res) => {
   connection.query(
-    `SELECT w.word_id, w.english_word, t.translation_id, t.translated_word, t.word_class, t.pronunciation, t.synonym, t.usage_sentence, t.audio_file
+    `SELECT w.english_word, t.translation_id, t.translated_word, t.word_class, t.pronunciation, t.synonym, t.usage_sentence, t.audio_file
      FROM words w
      LEFT JOIN translations t ON w.word_id = t.word_id`, 
     (err, results) => {
@@ -420,66 +437,14 @@ router.delete('/api/translations/:translationId', (req, res) => {
 });
 
 // Update word
-// router.put('/api/words/:wordId', async (req, res) => {
-//   const wordId = req.params.wordId;
-//   const { english_word, picture } = req.body;
-  
-//   try {
-//     let query = 'UPDATE words SET english_word = ?';
-//     let params = [english_word];
-    
-//     // If picture is provided (as base64), include it in the update
-//     if (picture && picture.startsWith('data:image')) {
-//       // Convert base64 to buffer
-//       const base64Data = picture.split(',')[1];
-//       const imageBuffer = Buffer.from(base64Data, 'base64');
-      
-//       query += ', picture = ?';
-//       params.push(imageBuffer);
-//     }
-    
-//     query += ' WHERE word_id = ?';
-//     params.push(wordId);
-    
-//     connection.query(query, params, (err, result) => {
-//       if (err) {
-//         console.error('Error updating word:', err);
-//         return res.status(500).json({ error: 'Database error' });
-//       }
-      
-//       if (result.affectedRows === 0) {
-//         return res.status(404).json({ error: 'Word not found' });
-//       }
-      
-//       res.json({ message: 'Word updated successfully' });
-//     });
-//   } catch (error) {
-//     console.error('Error processing image:', error);
-//     res.status(500).json({ error: 'Failed to process image' });
-//   }
-// });
-
-router.put('/api/words/:wordId', async (req, res) => {
+router.put('/api/words/:wordId', (req, res) => {
   const wordId = req.params.wordId;
-  const { english_word, picture } = req.body;
+  const { english_word } = req.body;
   
-  try {
-    // Start with basic query for english_word update
-    let query = 'UPDATE words SET english_word = ?';
-    let params = [english_word];
-    
-    // Only include picture in update if it's provided and is a base64 image
-    if (picture && typeof picture === 'string' && picture.startsWith('data:image')) {
-      const base64Data = picture.split(',')[1];
-      const imageBuffer = Buffer.from(base64Data, 'base64');
-      query += ', picture = ?';
-      params.push(imageBuffer);
-    }
-    
-    query += ' WHERE word_id = ?';
-    params.push(wordId);
-    
-    connection.query(query, params, (err, result) => {
+  connection.query(
+    'UPDATE words SET english_word = ? WHERE word_id = ?',
+    [english_word, wordId],
+    (err, result) => {
       if (err) {
         console.error('Error updating word:', err);
         return res.status(500).json({ error: 'Database error' });
@@ -490,32 +455,6 @@ router.put('/api/words/:wordId', async (req, res) => {
       }
       
       res.json({ message: 'Word updated successfully' });
-    });
-  } catch (error) {
-    console.error('Error processing update:', error);
-    res.status(500).json({ error: 'Failed to process update' });
-  }
-});
-
-// Add this route to fetch the image
-router.get('/api/words/:wordId/image', (req, res) => {
-  const wordId = req.params.wordId;
-  
-  connection.query(
-    'SELECT picture FROM words WHERE word_id = ?',
-    [wordId],
-    (err, results) => {
-      if (err) {
-        console.error('Error fetching image:', err);
-        return res.status(500).json({ error: 'Database error' });
-      }
-      
-      if (results.length === 0 || !results[0].picture) {
-        return res.status(404).json({ error: 'Image not found' });
-      }
-      
-      res.setHeader('Content-Type', 'image/jpeg');
-      res.send(results[0].picture);
     }
   );
 });
@@ -538,25 +477,19 @@ router.get('/api/words/check/:word', (req, res) => {
   );
 });
 
+// Create new word with default translations
 router.post('/api/words', (req, res) => {
   const { englishWord, picture } = req.body;
-  
-  // Process image if provided
-  let imageBuffer = null;
-  if (picture && picture.startsWith('data:image')) {
-    const base64Data = picture.split(',')[1];
-    imageBuffer = Buffer.from(base64Data, 'base64');
-  }
   
   connection.beginTransaction(err => {
     if (err) {
       return res.status(500).json({ error: 'Transaction error' });
     }
 
-    // Insert the English word with image
+    // Insert the English word
     connection.query(
       'INSERT INTO words (english_word, picture) VALUES (?, ?)',
-      [englishWord, imageBuffer],
+      [englishWord, picture],
       (err, result) => {
         if (err) {
           return connection.rollback(() => {
@@ -599,7 +532,7 @@ router.post('/api/words', (req, res) => {
               res.json({ 
                 word_id: wordId,
                 english_word: englishWord,
-                picture: imageBuffer ? true : false,
+                picture: picture,
                 translations: {}
               });
             });
@@ -608,31 +541,6 @@ router.post('/api/words', (req, res) => {
       }
     );
   });
-});
-
-// Add an endpoint to fetch word image
-router.get('/api/words/:wordId/picture', (req, res) => {
-  const wordId = req.params.wordId;
-  
-  connection.query(
-    'SELECT picture FROM words WHERE word_id = ?',
-    [wordId],
-    (err, results) => {
-      if (err) {
-        console.error('Error fetching image:', err);
-        return res.status(500).json({ error: 'Database error' });
-      }
-      
-      if (results.length === 0 || !results[0].picture) {
-        console.log('No image found for word ID:', wordId);
-        return res.status(404).json({ error: 'Image not found' });
-      }
-      
-      console.log('Image found for word ID:', wordId, 'Size:', results[0].picture.length);
-      res.setHeader('Content-Type', 'image/jpeg');
-      res.send(results[0].picture);
-    }
-  );
 });
 
 //USER MANAGEMENT API
@@ -944,3 +852,42 @@ const PORT = process.env.PORT || 3001;
 app.listen(PORT, () => {
   console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+
+
+
+
+
+// router.get('/auth/google/callback',
+//   passport.authenticate('google', { failureRedirect: '/' }),
+//   (req, res) => {
+//     res.redirect('/node/welcome');
+//   }
+// );
+
+// router.get('/welcome', (req, res) => {
+//   if (!req.user) {
+//     return res.redirect('/');
+//   }
+//   res.send(`
+//     <h1>Welcome ${req.user.displayName}</h1>
+//     <p>Email: ${req.user.emails[0].value}</p>
+//     <a href="/logout">Logout</a>
+//   `);
+// });
+
+// router.get('/logout', (req, res) => {
+//   req.logout((err) => {
+//     if (err) return next(err);
+
+//     req.session.destroy(() => {
+//       const googleLogoutURL = `https://accounts.google.com/Logout?continue=https://appengine.google.com/_ah/logout?continue=${encodeURIComponent('http://localhost:3000')}`;
+//       res.redirect(googleLogoutURL);
+//     });
+//   });
+// });
+
+// router.get('/login', (req, res) => {
+//   res.send('<h1>Login with Google</h1><a href="/node/auth/google">Login</a>');
+// });
+

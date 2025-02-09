@@ -72,6 +72,44 @@ const Content = () => {
     return userAccess?.role === 'manager';
   };
 
+  // const handleAddWord = async (newWord) => {
+  //   try {
+  //     // Check if word exists
+  //     const checkResponse = await fetch(`http://localhost:3001/api/words/check/${encodeURIComponent(newWord.englishWord)}`);
+  //     const { exists } = await checkResponse.json();
+      
+  //     if (exists) {
+  //       setErrorMessage('Word already exists in the dictionary');
+  //       return;
+  //     }
+  
+  //     // Create new word with translations
+  //     const response = await fetch('http://localhost:3001/api/words', {
+  //       method: 'POST',
+  //       headers: { 'Content-Type': 'application/json' },
+  //       body: JSON.stringify({
+  //         englishWord: newWord.englishWord,
+  //         picture: newWord.picture || null
+  //       }),
+  //     });
+  
+  //     if (!response.ok) throw new Error('Failed to add word');
+  
+  //     const savedWord = await response.json();
+      
+  //     // Refresh the dictionary data
+  //     const refreshResponse = await fetch('http://localhost:3001/api/content/words');
+  //     const refreshedData = await refreshResponse.json();
+  //     setDictionaryData(refreshedData);
+      
+  //     setShowNewWordModal(false);
+  //     setErrorMessage('');
+  //   } catch (error) {
+  //     console.error('Error adding word:', error);
+  //     setErrorMessage('Failed to add word. Please try again.');
+  //   }
+  // };
+
   const handleAddWord = async (newWord) => {
     try {
       // First check if word exists in current dictionary data
@@ -197,69 +235,21 @@ const Content = () => {
 
   if (loading) return <div>Loading...</div>;
 
-  // const handleUpdate = async (updatedWord) => {
-  //   try {
-  //     if (updatedWord.type === 'english') {
-  //       const response = await fetch(`http://localhost:3001/api/words/${updatedWord.id}`, {
-  //         method: 'PUT',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({
-  //           english_word: updatedWord.englishWord,
-  //           picture: updatedWord.picture // Include the base64 image if it exists
-  //         }),
-  //       });
-        
-  //       if (!response.ok) throw new Error('Failed to update word');
-        
-  //     } else {
-  //       // Translation update logic remains unchanged
-  //       const response = await fetch(`http://localhost:3001/api/translations/${updatedWord.id}`, {
-  //         method: 'PUT',
-  //         headers: { 'Content-Type': 'application/json' },
-  //         body: JSON.stringify({
-  //           translated_word: updatedWord.translatedWord,
-  //           word_class: updatedWord.wordClass,
-  //           pronunciation: updatedWord.pronunciation,
-  //           synonym: updatedWord.synonym,
-  //           usage_sentence: updatedWord.usageSentence
-  //         }),
-  //       });
-        
-  //       if (!response.ok) throw new Error('Failed to update translation');
-  //     }
-  
-  //     // Refresh data
-  //     const response = await fetch('http://localhost:3001/api/content/words');
-  //     const data = await response.json();
-  //     setDictionaryData(data);
-  //     setSelectedWord(null);
-      
-  //   } catch (error) {
-  //     console.error('Error updating:', error);
-  //     setErrorMessage('Failed to update. Please try again.');
-  //   }
-  // };
   const handleUpdate = async (updatedWord) => {
     try {
       if (updatedWord.type === 'english') {
-        const updateData = {
-          english_word: updatedWord.englishWord
-        };
-        
-        // Only include picture if it was changed
-        if (updatedWord.picture) {
-          updateData.picture = updatedWord.picture;
-        }
-        
         const response = await fetch(`http://localhost:3001/api/words/${updatedWord.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updateData)
+          body: JSON.stringify({
+            english_word: updatedWord.englishWord
+          }),
         });
         
         if (!response.ok) throw new Error('Failed to update word');
+        
       } else {
-        // Translation update logic remains unchanged
+        // Update translation using translations_id
         const response = await fetch(`http://localhost:3001/api/translations/${updatedWord.id}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
