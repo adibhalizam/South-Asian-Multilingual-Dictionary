@@ -56,11 +56,6 @@ const Navbar = () => {
             Content
           </NavLink>
         </li>
-        <li>
-          <NavLink to="/help" activeClassName="active" className="navbar-link">
-            Help
-          </NavLink>
-        </li>
         {userRole === 'manager' && (
           <li>
             <NavLink to="/settings" activeClassName="active" className="navbar-link">

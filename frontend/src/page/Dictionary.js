@@ -1,4 +1,6 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+
 import './style/Dictionary.css';
 
 const LANGUAGE_MAP = {
@@ -11,6 +13,11 @@ const LANGUAGE_MAP = {
 };
 
 const Dictionary = () => {
+   const navigate = useNavigate();
+
+  const handleNavigateToHelp = () => {
+    navigate('/help'); 
+  };
   const [searchTerm, setSearchTerm] = useState('');
   const [mainLanguage, setMainLanguage] = useState('English');
   const [selectedLanguages, setSelectedLanguages] = useState({
@@ -210,8 +217,14 @@ const Dictionary = () => {
 
   return (
     <div className="dictionary-page">
-      <h1>Multilingual Dictionary</h1>
+      <div className="dictionary-header">
+        <h1>Multilingual Dictionary</h1>
 
+        {/* Add the "Help" button to navigate */}
+        <button onClick={handleNavigateToHelp} className="help-button">
+          i
+        </button>
+      </div>
       <div className="dictionary-search-bar-container">
         <select onChange={handleMainLanguageChange} value={mainLanguage}>
           <option value="English">English</option>

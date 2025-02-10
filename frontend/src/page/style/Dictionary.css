@@ -17,10 +17,46 @@ body {
   position: relative;
 }
 
-.dictionary-page h1 {
-  font-size: 3em;
-  color: #133e87;
-  margin-bottom: 20px;
+/* Header Container */
+.dictionary-header {
+  display: flex;
+  justify-content: center; /* Center the items horizontally */
+  align-items: center; /* Align the items vertically */
+  gap: 10px; /* Add some space between the title and the button */
+  margin-top: 20px;
+}
+
+/* Title Styling */
+.dictionary-header h1 {
+  font-size: 2.5em;
+  color: #133e87; /* Blue color for the title */
+  font-weight: bold;
+}
+
+/* Help Button Styling */
+.help-button {
+  background-color: #608bc1;
+  color: white;
+  font-size: 1rem;
+  font-weight: bold;
+  width: 25px; /* Set fixed width */
+  height: 25px; /* Set fixed height */
+  border-radius: 50%; /* Make it round */
+  border: none;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.help-button:hover {
+  background-color: #cbdceb; /* Change to a lighter color on hover */
+}
+
+.help-button:focus {
+  outline: none;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
 
 /*SEARCH BAR*/
