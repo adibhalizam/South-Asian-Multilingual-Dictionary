@@ -1,0 +1,136 @@
+/* Help Page Styles */
+
+/* General Container */
+.help-container {
+    padding: 40px 20px;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+  
+  /* Style the back button */
+  .back-button {
+    background-color: transparent;
+    border: none;
+    font-size: 18px;
+    color: #4f81bd; /* Match your dictionary color */
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+  }
+  
+  .back-button:hover {
+    color: #336699; /* Change color on hover */
+  }
+  
+  .back-button:focus {
+    outline: none;
+  }
+  
+  .back-button::before {
+    content: "←";
+    margin-right: 10px;
+    font-size: 20px;
+  }
+  
+  /* Main Title */
+  .help-title {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #133e87; /* Dark blue */
+    text-align: center;
+    margin-bottom: 40px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  
+  /* Section and Subsection Titles */
+  .section-title,
+  .subsection-title {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #608bc1; /* Baby yellow */
+    margin-bottom: 15px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid #608bc1; /* Underline with baby yellow */
+    display: inline-block;
+  }
+  
+  /* List items in help sections */
+  .help-list {
+    font-size: 1rem;
+    line-height: 1.7;
+    margin-bottom: 20px;
+    color: #333;
+  }
+  
+  .help-list p {
+    margin-bottom: 10px;
+    text-align: left;
+  }
+  
+  /* Code snippets */
+  .help-list code {
+    font-size: 1rem;
+    background-color: #f4f4f4;
+    padding: 2px 4px;
+    border-radius: 4px;
+    color: #333;
+  }
+  
+  /* Adding subtle hover effects on paragraphs */
+  .help-list p:hover {
+    color: #133e87; /* Dark blue */
+    cursor: pointer;
+    transition: color 0.3s ease;
+  }
+  
+  /* Section background colors and spacing */
+  .help-section {
+    margin-bottom: 40px;
+    padding: 20px;
+    border-left: 5px solid #133e87; /* Dark blue line */
+    background-color: #f9f9f9; /* Light gray background */
+    border-radius: 8px;
+  }
+  
+  /* Mobile Responsiveness */
+  @media (max-width: 768px) {
+    .help-container {
+      padding: 20px;
+    }
+  
+    .help-title {
+      font-size: 2rem;
+    }
+  
+    .section-title {
+      font-size: 1.5rem;
+    }
+  
+    .subsection-title {
+      font-size: 1.4rem;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .help-container {
+      padding: 15px;
+    }
+  
+    .help-title {
+      font-size: 1.8rem;
+    }
+  
+    .section-title {
+      font-size: 1.4rem;
+    }
+  
+    .subsection-title {
+      font-size: 1.3rem;
+    }
+  
+    .help-list {
+      font-size: 0.9rem;
+    }
+  }

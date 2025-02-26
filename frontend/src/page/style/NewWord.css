@@ -1,0 +1,185 @@
+.new-word {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  background: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  width: 80%;
+  max-width: 600px;
+  border-radius: 8px;
+  max-height: 500px;
+  overflow-y: auto; /* Allow vertical scrolling */
+}
+
+.new-word::-webkit-scrollbar {
+  width: 20px; /* Width of the vertical scrollbar */
+  height: 10px; /* Height of the horizontal scrollbar */
+}
+
+/* Style the track (the background) */
+.new-word::-webkit-scrollbar-track {
+  background: #f3f3e0;
+  border-radius: 0px;
+}
+
+/* Style the thumb (the draggable part) */
+.new-word::-webkit-scrollbar-thumb {
+  background: #608bc1;
+  border-radius: 10px;
+}
+
+/* Change the thumb color on hover */
+.new-word::-webkit-scrollbar-thumb:hover {
+  background: #133e87; /* Darker color on hover */
+}
+
+.new-word::-webkit-scrollbar-corner {
+  background: #f1f1f1;
+}
+
+.close-button {
+  color: #133e87;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  font-size: 18px;
+  border-radius: 50%;
+}
+
+.close-button:hover {
+  background: darkred;
+  color: white;
+}
+
+/* Tab buttons */
+.tabs {
+  display: flex;
+  margin-bottom: 20px;
+  justify-content: center;
+  gap: 10px;
+}
+
+.tab {
+  padding: 10px 20px;
+  background: #f3f3e0;
+  border: none;
+  cursor: pointer;
+  border-radius: 10px;
+}
+
+.tab.active {
+  background: #133e87;
+  color: white;
+}
+
+.tab:hover {
+  background: #608bc1;
+}
+
+/* Form container */
+.add-word-form,
+.import-file-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.add-word-form label {
+  display: flex;
+  justify-content: space-between; /* Ensure label and input are spread out */
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+.add-word-form input[type="text"],
+.add-word-form select,
+.add-word-form textarea,
+.add-word-form input[type="file"] {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 75%; /* You can adjust the width to your liking */
+  max-width: 500px;
+  margin-left: 2px; /* Add some space between label and input */
+}
+
+.add-word-form select {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 78%; /* You can adjust the width to your liking */
+  max-width: 500px;
+}
+
+.add-word-form textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+.submit-button {
+  background-color: #cbdceb;
+  color: #608bc1;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
+  width: 100%;
+}
+
+.submit-button:hover {
+  background-color: #133e87;
+  color: #f3f3e0;
+}
+
+.submit-button:active {
+  background-color: #133e87;
+}
+
+/* Styling for the file input */
+input[type="file"] {
+  padding: 5px;
+  font-size: 14px;
+}
+
+input[type="file"]:focus {
+  border-color: #007bff;
+}
+
+.import-file-form label {
+  font-size: 16px;
+  color: #333;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.import-file-form input[type="file"] {
+  display: none; /* Hide the default file input */
+}
+
+.import-file-form .file-label {
+  display: inline-block;
+  background-color: #cbdceb; /* New background color */
+  color: #608bc1; /* New text color */
+  padding: 160px 25px; /* Make the box longer */
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  text-align: center;
+  border: 2px dashed #608bc1; /* Dashed border with the text color */
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+.import-file-form .file-label:hover {
+  background-color: #a8b9d8; /* Slightly darker shade for hover effect */
+  border-color: #4a6f96; /* Darker border color on hover */
+}

@@ -1,0 +1,138 @@
+/* Overlay Background */
+.word-details-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5); /* Semi-transparent black */
+  z-index: 999; /* Below the modal */
+}
+
+/* Popup Word Details Box */
+.word-details-box {
+  position: fixed;
+  top: 20%;
+  left: 50%;
+  transform: translate(-50%, -20%);
+  background: white;
+  border: 1px solid #ddd;
+  padding: 20px;
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  max-width: 400px;
+  width: 100%;
+  border-radius: 8px;
+}
+
+/* Close Button */
+.word-details-close-button {
+  color: #608bc1;
+  border: none;
+  padding: 5px 10px;
+  cursor: pointer;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  border-radius: 50%;
+}
+
+.word-details-close-button:hover {
+  background: darkred;
+  color: white;
+}
+
+/* Container for label and input */
+.word-details label {
+  display: flex;
+  justify-content: space-between; /* Ensure label and input are spread out */
+  align-items: center;
+  margin-bottom: 15px;
+  font-size: 14px;
+}
+
+/* Input fields to fill remaining space */
+.word-details input {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 65%; /* You can adjust the width to your liking */
+  max-width: 300px;
+  margin-left: 10px; /* Add some space between label and input */
+}
+
+.word-details input:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Header for Word Details */
+.word-details h2 {
+  font-size: 1.2em;
+  margin-bottom: 20px;
+}
+
+/* Style for textarea */
+.word-details textarea {
+  padding: 8px;
+  font-size: 14px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 65%; /* Ensure it's the same width as the input fields */
+  max-width: 300px;
+  margin-left: 10px;
+  height: 100px; /* Adjust the height as needed */
+  resize: vertical; /* Allow the user to resize vertically */
+  overflow-y: auto; /* Make it scrollable */
+}
+
+.word-details textarea:focus {
+  outline: none;
+  border-color: #007bff;
+}
+
+/* Button Container */
+.word-details-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+/* Update Button */
+.word-details-update-button {
+  background-color: lightblue;
+  color: white;
+  border: none;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.word-details-update-button:hover,
+.word-details-update-button:focus {
+  background-color: darkblue;
+  transform: scale(1.05);
+}
+
+/* Delete Button */
+.word-details-delete-button {
+  background-color: white;
+  color: red;
+  border: 1px solid red;
+  padding: 10px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.word-details-delete-button:hover,
+.word-details-delete-button:focus {
+  background-color: red;
+  color: white;
+  transform: scale(1.05);
+}
