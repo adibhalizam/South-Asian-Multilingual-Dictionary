@@ -5,10 +5,12 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
   // const [editableWord, setEditableWord] = useState(wordDetails);
   const [editableWord, setEditableWord] = useState({
     ...wordDetails,
-    picture: undefined // Initialize picture as undefined
+    picture: undefined, // Initialize picture as undefined
+    audioBlob: undefined
   });
   const [previewImage, setPreviewImage] = useState(null);
-  const languages = ['Bengali', 'Hindi', 'Persian', 'Punjabi', 'Tamil', 'Urdu'];
+  const [audioUrl, setAudioUrl] = useState(null);
+  const languages = ['Urdu', 'Bengali', 'Hindi', 'Punjabi', 'Tamil', 'Persian' ];
 
   useEffect(() => {
     // If there's an existing image, fetch and display it
@@ -28,6 +30,23 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
           setPreviewImage(null);
         });
     }
+
+    // Fetch existing audio if it's a translation
+    if (editableWord.type === 'translation' && editableWord.id) {
+      fetch(`http://localhost:3001/api/translations/${editableWord.id}/audio`)
+        .then(response => {
+          if (response.ok) return response.blob();
+          throw new Error('Audio not found');
+        })
+        .then(blob => {
+          setAudioUrl(URL.createObjectURL(blob));
+        })
+        .catch(error => {
+          console.error('Error loading audio:', error);
+          setAudioUrl(null);
+        });
+    }
+
   }, [editableWord.id]);
 
   // Define RTL languages
@@ -59,6 +78,21 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
     }
   };
 
+  const handleAudioChange = (e) => {
+    const file = e.target.files[0];
+    if (file && file.type.startsWith('audio/')) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setAudioUrl(URL.createObjectURL(file));
+        setEditableWord(prev => ({
+          ...prev,
+          audioFile: reader.result
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   // const handleUpdate = () => {
   //   onUpdate(editableWord);
   // };
@@ -66,7 +100,8 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
     // Only include picture in update if it was changed
     const updateData = {
       ...editableWord,
-      picture: editableWord.picture // This will be undefined if no new image was selected
+      picture: editableWord.picture, // This will be undefined if no new image was selected
+      audioFile: editableWord.audioFile
     };
     onUpdate(updateData);
   };
@@ -184,6 +219,23 @@ const WordDetailsBox = ({ wordDetails, onClose, onUpdate, onDelete }) => {
                 style={getDirectionStyle('usageSentence')}
               />
             </label>
+
+            <label>
+              Audio Pronunciation:
+              <input
+                type="file"
+                accept="audio/*"
+                onChange={handleAudioChange}
+              />
+            </label>
+            {audioUrl && (
+              <div className="audio-preview">
+                <audio controls src={audioUrl}>
+                  Your browser does not support the audio element.
+                </audio>
+              </div>
+            )}
+            
           </>
         )}
       </div>

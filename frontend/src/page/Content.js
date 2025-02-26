@@ -239,53 +239,112 @@ const Content = () => {
   //     setErrorMessage('Failed to update. Please try again.');
   //   }
   // };
-  const handleUpdate = async (updatedWord) => {
-    try {
-      if (updatedWord.type === 'english') {
-        const updateData = {
-          english_word: updatedWord.englishWord
-        };
+
+
+  /////////////
+  // const handleUpdate = async (updatedWord) => {
+  //   try {
+  //     if (updatedWord.type === 'english') {
+  //       const updateData = {
+  //         english_word: updatedWord.englishWord
+  //       };
         
-        // Only include picture if it was changed
-        if (updatedWord.picture) {
-          updateData.picture = updatedWord.picture;
-        }
+  //       // Only include picture if it was changed
+  //       if (updatedWord.picture) {
+  //         updateData.picture = updatedWord.picture;
+  //       }
         
-        const response = await fetch(`http://localhost:3001/api/words/${updatedWord.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(updateData)
-        });
+  //       const response = await fetch(`http://localhost:3001/api/words/${updatedWord.id}`, {
+  //         method: 'PUT',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify(updateData)
+  //       });
         
-        if (!response.ok) throw new Error('Failed to update word');
-      } else {
-        // Translation update logic remains unchanged
-        const response = await fetch(`http://localhost:3001/api/translations/${updatedWord.id}`, {
-          method: 'PUT',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            translated_word: updatedWord.translatedWord,
-            word_class: updatedWord.wordClass,
-            pronunciation: updatedWord.pronunciation,
-            synonym: updatedWord.synonym,
-            usage_sentence: updatedWord.usageSentence
-          }),
-        });
+  //       if (!response.ok) throw new Error('Failed to update word');
+  //     } else {
+  //       // Translation update logic remains unchanged
+  //       const response = await fetch(`http://localhost:3001/api/translations/${updatedWord.id}`, {
+  //         method: 'PUT',
+  //         headers: { 'Content-Type': 'application/json' },
+  //         body: JSON.stringify({
+  //           translated_word: updatedWord.translatedWord,
+  //           word_class: updatedWord.wordClass,
+  //           pronunciation: updatedWord.pronunciation,
+  //           synonym: updatedWord.synonym,
+  //           usage_sentence: updatedWord.usageSentence
+  //         }),
+  //       });
         
-        if (!response.ok) throw new Error('Failed to update translation');
-      }
+  //       if (!response.ok) throw new Error('Failed to update translation');
+  //     }
   
-      // Refresh data
-      const response = await fetch('http://localhost:3001/api/content/words');
-      const data = await response.json();
-      setDictionaryData(data);
-      setSelectedWord(null);
+  //     // Refresh data
+  //     const response = await fetch('http://localhost:3001/api/content/words');
+  //     const data = await response.json();
+  //     setDictionaryData(data);
+  //     setSelectedWord(null);
       
-    } catch (error) {
-      console.error('Error updating:', error);
-      setErrorMessage('Failed to update. Please try again.');
+  //   } catch (error) {
+  //     console.error('Error updating:', error);
+  //     setErrorMessage('Failed to update. Please try again.');
+  //   }
+  // };
+
+  // Update the handleUpdate function in Content.js
+const handleUpdate = async (updatedWord) => {
+  try {
+    if (updatedWord.type === 'english') {
+      const updateData = {
+        english_word: updatedWord.englishWord
+      };
+      
+      if (updatedWord.picture) {
+        updateData.picture = updatedWord.picture;
+      }
+      
+      const response = await fetch(`http://localhost:3001/api/words/${updatedWord.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
+      
+      if (!response.ok) throw new Error('Failed to update word');
+      
+    } else {
+      // Translation update with audio support
+      const updateData = {
+        translated_word: updatedWord.translatedWord,
+        word_class: updatedWord.wordClass,
+        pronunciation: updatedWord.pronunciation,
+        synonym: updatedWord.synonym,
+        usage_sentence: updatedWord.usageSentence
+      };
+
+      // Only include audio if it was changed
+      if (updatedWord.audioFile) {
+        updateData.audioFile = updatedWord.audioFile;
+      }
+
+      const response = await fetch(`http://localhost:3001/api/translations/${updatedWord.id}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(updateData)
+      });
+      
+      if (!response.ok) throw new Error('Failed to update translation');
     }
-  };
+
+    // Refresh data
+    const response = await fetch('http://localhost:3001/api/content/words');
+    const data = await response.json();
+    setDictionaryData(data);
+    setSelectedWord(null);
+    
+  } catch (error) {
+    console.error('Error updating:', error);
+    setErrorMessage('Failed to update. Please try again.');
+  }
+};
 
   const handleDelete = async (id, isEnglishWord) => {
   try {

@@ -145,6 +145,62 @@ router.get('/api/words', (req, res) => {
 
 //CONTENT MANAGEMENT API
 // New API endpoint for content management
+// router.get('/api/content/words', (req, res) => {
+//   connection.query(
+//     `SELECT 
+//       w.word_id,
+//       w.english_word,
+//       w.picture,
+//       t.translations_id,
+//       t.translation_id,
+//       t.word_id AS translation_word_id,
+//       t.translated_word,
+//       t.word_class,
+//       t.pronunciation,
+//       t.synonym,
+//       t.usage_sentence,
+//       t.audio_file
+//     FROM words w
+//     LEFT JOIN translations t ON w.word_id = t.word_id`,
+//     (err, results) => {
+//       if (err) {
+//         console.error('Error executing query:', err);
+//         return res.status(500).send('Database query error');
+//       }
+
+//       // Structure the data with word_id included
+//       const wordData = results.reduce((acc, row) => {
+//         const wordId = row.word_id;
+        
+//         if (!acc[wordId]) {
+//           acc[wordId] = {
+//             word_id: wordId,
+//             english_word: row.english_word,
+//             picture: row.picture,
+//             translations: {}
+//           };
+//         }
+
+//         if (row.translation_id !== null) {
+//           acc[wordId].translations[row.translation_id] = {
+//             translations_id: row.translations_id,
+//             translation_id: row.translation_id,
+//             translated_word: row.translated_word,
+//             word_class: row.word_class,
+//             pronunciation: row.pronunciation,
+//             synonym: row.synonym,
+//             usage_sentence: row.usage_sentence,
+//             audio_file: row.audio_file
+//           };
+//         }
+
+//         return acc;
+//       }, {});
+
+//       res.json(Object.values(wordData));
+//     }
+//   );
+// });
 router.get('/api/content/words', (req, res) => {
   connection.query(
     `SELECT 
@@ -159,7 +215,7 @@ router.get('/api/content/words', (req, res) => {
       t.pronunciation,
       t.synonym,
       t.usage_sentence,
-      t.audio_file
+      CASE WHEN t.audio_file IS NOT NULL THEN true ELSE false END as has_audio
     FROM words w
     LEFT JOIN translations t ON w.word_id = t.word_id`,
     (err, results) => {
@@ -190,7 +246,7 @@ router.get('/api/content/words', (req, res) => {
             pronunciation: row.pronunciation,
             synonym: row.synonym,
             usage_sentence: row.usage_sentence,
-            audio_file: row.audio_file
+            has_audio: row.has_audio
           };
         }
 
@@ -284,33 +340,78 @@ router.get('/api/translations/:translationId', (req, res) => {
   );
 });
 
-// Update translation
+// // Update translation
+// router.put('/api/translations/:translationId', (req, res) => {
+//   const translationId = req.params.translationId;
+//   const { translated_word, word_class, pronunciation, synonym, usage_sentence } = req.body;
+  
+//   connection.query(
+//     `UPDATE translations 
+//      SET translated_word = ?,
+//          word_class = ?,
+//          pronunciation = ?,
+//          synonym = ?,
+//          usage_sentence = ?
+//      WHERE translations_id = ?`,
+//     [translated_word, word_class, pronunciation, synonym, usage_sentence, translationId],
+//     (err, result) => {
+//       if (err) {
+//         console.error('Error updating translation:', err);
+//         return res.status(500).json({ error: 'Database error' });
+//       }
+      
+//       if (result.affectedRows === 0) {
+//         return res.status(404).json({ error: 'Translation not found' });
+//       }
+      
+//       res.json({ message: 'Translation updated successfully' });
+//     }
+//   );
+// });
 router.put('/api/translations/:translationId', (req, res) => {
   const translationId = req.params.translationId;
-  const { translated_word, word_class, pronunciation, synonym, usage_sentence } = req.body;
+  const { 
+    translated_word, 
+    word_class, 
+    pronunciation, 
+    synonym, 
+    usage_sentence,
+    audioFile  // New field for audio
+  } = req.body;
   
-  connection.query(
-    `UPDATE translations 
-     SET translated_word = ?,
-         word_class = ?,
-         pronunciation = ?,
-         synonym = ?,
-         usage_sentence = ?
-     WHERE translations_id = ?`,
-    [translated_word, word_class, pronunciation, synonym, usage_sentence, translationId],
-    (err, result) => {
-      if (err) {
-        console.error('Error updating translation:', err);
-        return res.status(500).json({ error: 'Database error' });
-      }
-      
-      if (result.affectedRows === 0) {
-        return res.status(404).json({ error: 'Translation not found' });
-      }
-      
-      res.json({ message: 'Translation updated successfully' });
+  let query = `
+    UPDATE translations 
+    SET translated_word = ?,
+        word_class = ?,
+        pronunciation = ?,
+        synonym = ?,
+        usage_sentence = ?
+  `;
+  let params = [translated_word, word_class, pronunciation, synonym, usage_sentence];
+
+  // If new audio file is provided
+  if (audioFile && audioFile.startsWith('data:audio')) {
+    const base64Data = audioFile.split(',')[1];
+    const audioBuffer = Buffer.from(base64Data, 'base64');
+    query += ', audio_file = ?';
+    params.push(audioBuffer);
+  }
+
+  query += ' WHERE translations_id = ?';
+  params.push(translationId);
+  
+  connection.query(query, params, (err, result) => {
+    if (err) {
+      console.error('Error updating translation:', err);
+      return res.status(500).json({ error: 'Database error' });
     }
-  );
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ error: 'Translation not found' });
+    }
+    
+    res.json({ message: 'Translation updated successfully' });
+  });
 });
 
 // Add new translation
@@ -415,6 +516,31 @@ router.delete('/api/translations/:translationId', (req, res) => {
       }
       
       res.json({ message: 'Translation soft deleted successfully' });
+    }
+  );
+});
+
+// Get audio file for a translation
+router.get('/api/translations/:translationId/audio', (req, res) => {
+  const translationId = req.params.translationId;
+  
+  connection.query(
+    'SELECT audio_file FROM translations WHERE translations_id = ?',
+    [translationId],
+    (err, results) => {
+      if (err) {
+        console.error('Error fetching audio:', err);
+        return res.status(500).json({ error: 'Database error' });
+      }
+      
+      if (results.length === 0 || !results[0].audio_file) {
+        return res.status(404).json({ error: 'Audio not found' });
+      }
+      
+      res.setHeader('Content-Type', 'audio/mpeg');
+      res.setHeader('Content-Length', results[0].audio_file.length);
+      res.setHeader('Accept-Ranges', 'bytes');
+      res.send(results[0].audio_file);
     }
   );
 });
@@ -575,7 +701,7 @@ router.post('/api/words', (req, res) => {
           null,
           null,
           null,
-          null
+          ''
         ]);
 
         connection.query(

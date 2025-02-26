@@ -224,11 +224,25 @@ const Dictionary = () => {
           <p> {translation.usage_sentence || 'N/A'}</p>
         </div>
 
-        {translation.audio_file && translation.audio_file.data && (
+        {/* {translation.audio_file && translation.audio_file.data && (
           <audio controls className="dictionary-audio-player">
             <source 
               src={`data:audio/mpeg;base64,${btoa(String.fromCharCode.apply(null, translation.audio_file.data))}`} 
               type="audio/mpeg" 
+            />
+            Your browser does not support the audio element.
+          </audio>
+        )} */}
+
+        {translation.has_audio && (
+          <audio 
+            controls 
+            className="dictionary-audio-player"
+            key={translation.translations_id} // Add key to force re-render when translation changes
+          >
+            <source 
+              src={`http://localhost:3001/api/translations/${translation.translations_id}/audio`}
+              type="audio/mpeg"
             />
             Your browser does not support the audio element.
           </audio>
@@ -245,7 +259,7 @@ const Dictionary = () => {
   
     if (hasImage) {
       return (
-        <div className="dictionary-image-container">
+        // <div className="dictionary-image-container">
           <div className="dictionary-image-wrapper">
             <img 
               src={`http://localhost:3001/api/words/${wordId}/picture`}
@@ -257,7 +271,7 @@ const Dictionary = () => {
               }}
             />
           </div>
-        </div>
+        // </div>
       );
     }
   
@@ -277,7 +291,7 @@ const Dictionary = () => {
   return (
     <div className="dictionary-page">
       <div className="dictionary-header">
-        <h1>Multilingual Dictionary</h1>
+        <h1>South Asian Multilingual Dictionary</h1>
 
         {/* Add the "Help" button to navigate */}
         <button onClick={handleNavigateToHelp} className="help-button">
@@ -304,7 +318,8 @@ const Dictionary = () => {
           handleSearchChange(e);
         }}
         style={{
-          textAlign: detectDirection(searchTerm) === 'rtl' ? 'right' : 'left',
+          // textAlign: detectDirection(searchTerm) === 'rtl' ? 'right' : 'left',
+          textAlign: 'center'
         }}
       />
 
