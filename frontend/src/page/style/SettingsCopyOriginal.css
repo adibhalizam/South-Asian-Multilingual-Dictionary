@@ -22,14 +22,7 @@
     font-weight: bold;
   }
   
-  .form-group input[type="email"] {
-    width: 96.5%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 4px;
-    font-size: 14px;
-  }
-  
+  .form-group input[type="email"],
   .form-group select {
     width: 100%;
     padding: 8px;
@@ -56,7 +49,7 @@
   }
   
   .submit-button {
-    background-color: #608bc1;
+    background-color: #133e87;
     color: white;
     padding: 10px 20px;
     border: none;
@@ -67,7 +60,7 @@
   }
   
   .submit-button:hover {
-    background-color: #133e87;
+    background-color: #0f2f66;
   }
   
   .error-message {
@@ -97,22 +90,21 @@
     overflow: hidden;
   }
   
-  .user-header,
-  .user-row {
+  .user-header {
     display: grid;
-    grid-template-columns: 300px 1fr 2fr 1fr; /* Fixed width for email */
+    grid-template-columns: 2fr 1fr 2fr 1fr;
     gap: 10px;
     padding: 15px;
-    align-items: center;
-  }
-  
-  .user-header {
     background-color: #608bc1;
     color: white;
     font-weight: bold;
   }
   
   .user-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr 2fr 1fr;
+    gap: 10px;
+    padding: 15px;
     border-bottom: 1px solid #ddd;
   }
   
@@ -132,7 +124,8 @@
   .delete-button:hover {
     background-color: #c82333;
   }
-  
+
+
   .modal-overlay {
     position: fixed;
     top: 0;
@@ -192,9 +185,3 @@
   .cancel-button:hover {
     background-color: #5a6268;
   }
-
-
-  .user-management {
-    margin-top: 0px;
-  }
-  

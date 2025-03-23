@@ -291,12 +291,22 @@ const Dictionary = () => {
   return (
     <div className="dictionary-page">
       <div className="dictionary-header">
+        <div className="left-button">
+          <button onClick={handleNavigateToHelp} className="help-button">
+            i
+          </button>
+        </div>
+        
         <h1>South Asian Multilingual Dictionary</h1>
-
-        {/* Add the "Help" button to navigate */}
-        <button onClick={handleNavigateToHelp} className="help-button">
-          i
-        </button>
+        
+        <div className="right-button">
+          <button 
+            className="admin-login-button" 
+            onClick={() => window.location.href = 'http://localhost:3001/auth/google'}
+          >
+            Admin Login
+          </button>
+        </div>
       </div>
 
       <div className="dictionary-search-bar-container">
@@ -362,7 +372,6 @@ const Dictionary = () => {
         </div>
       )} */}
 
-    <button className="login-button" onClick={() => window.location.href = 'http://localhost:3001/auth/google'}>Admin Login</button>
     </div>
   );
 };

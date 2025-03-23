@@ -94,8 +94,9 @@ const Settings = () => {
 
   return (
     <div className="settings-container">
+      <h1>User Management</h1>
+      
       <form onSubmit={handleSubmit} className="settings-form">
-         <h1 class="user-management">User Management</h1>
         <div className="form-group">
           <label htmlFor="email">Email:</label>
           <input
@@ -143,34 +144,31 @@ const Settings = () => {
       {success && <div className="success-message">{success}</div>}
 
       <div className="users-list">
-  <div className="users-grid">
-    <h2>Existing Users</h2>
-
-    <div className="user-header">
-      <div>Email</div>
-      <div>Role</div>
-      <div>Languages</div>
-      <div>Actions</div>
-    </div>
-
-    {users.map(user => (
-      <div key={user.email} className="user-row">
-        <div>{user.email}</div>
-        <div>{user.role}</div>
-        <div>{user.languages ? user.languages.join(', ') : '-'}</div>
-        <div>
-          <button 
-            onClick={() => confirmDelete(user.email)}
-            className="delete-button"
-          >
-            Delete
-          </button>
+        <h2>Existing Users</h2>
+        <div className="users-grid">
+          <div className="user-header">
+            <div>Email</div>
+            <div>Role</div>
+            <div>Languages</div>
+            <div>Actions</div>
+          </div>
+          {users.map(user => (
+            <div key={user.email} className="user-row">
+              <div>{user.email}</div>
+              <div>{user.role}</div>
+              <div>{user.languages ? user.languages.join(', ') : '-'}</div>
+              <div>
+                <button 
+                  onClick={() => confirmDelete(user.email)}
+                  className="delete-button"
+                >
+                  Delete
+                </button>
+              </div>
+            </div>
+          ))}
         </div>
       </div>
-    ))}
-  </div>
-</div>
-
 
       {showConfirmDialog && (
         <div className="modal-overlay">

@@ -423,76 +423,40 @@ const handleUpdate = async (updatedWord) => {
     setCurrentPage(1); // Reset to first page on new search
   };
 
- const renderPagination = () => {
-  const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+  const renderPagination = () => {
+    const totalPages = Math.ceil(sortedData.length / itemsPerPage);
+    const pageNumbers = [];
 
-  const handleInputChange = (e) => {
-    let value = parseInt(e.target.value);
-    if (!isNaN(value) && value >= 1 && value <= totalPages) {
-      handlePageChange(value);
+    for (let i = 1; i <= totalPages; i++) {
+      if (i === 1 || i === totalPages || (i >= currentPage - 2 && i <= currentPage + 2)) {
+        pageNumbers.push(i);
+      }
     }
-  };
 
-  return (
-    <div className="pagination">
-      <button className='pagination-button'
-        onClick={() => handlePageChange(currentPage - 1)}
-        disabled={currentPage === 1}
+    return pageNumbers.map((pageNum, index, arr) => (
+      <span
+        key={pageNum}
+        onClick={() => handlePageChange(pageNum)}
+        className={`page-number ${pageNum === currentPage ? 'active' : ''} ${pageNum === arr[0] ? 'first' : ''} ${pageNum === arr[arr.length - 1] ? 'last' : ''}`}
       >
-        Previous
-      </button>
-      <span className="page-input-container">
-        {' '}
-        <input
-          type="number"
-          min="1"
-          max={totalPages}
-          value={currentPage}
-          onChange={handleInputChange}
-          className="page-input"
-          style={{ width: '60px', textAlign: 'center' }}
-        />{' '}
-        of {totalPages}
+        {pageNum}
       </span>
-
-      <button className='pagination-button'
-        onClick={() => handlePageChange(currentPage + 1)}
-        disabled={currentPage === totalPages}
-      >
-        Next
-      </button>
-    </div>
-  );
-};
-
+    ));
+  };
 
   return (
     <div className="content-page">
       <h1>Multilingual Dictionary Content</h1>
       {errorMessage && <p className="content-error-message">{errorMessage}</p>}
-      <div className="dictionary-search-bar-container">
 
-       <input
+      <input
         type="text"
-        placeholder="Search for a word"
+        placeholder="Search word"
         value={searchTerm}
-        onChange={(e) => {
-          handleSearchChange(e);
-        }}
-        style={{
-          // textAlign: detectDirection(searchTerm) === 'rtl' ? 'right' : 'left',
-          textAlign: 'center'
-        }}
+        // onChange={(e) => setSearchTerm(e.target.value)}
+        onChange={handleSearchChange}
+        className="search-bar"
       />
-
-        
-        <button
-          className="add-word-button"
-          onClick={() => setShowNewWordModal(true)}
-        >
-          + New Word
-        </button>
-      </div>
 
       <div className="content-container">
         <div className="content-header">
@@ -538,8 +502,29 @@ const handleUpdate = async (updatedWord) => {
 
       <div className="content-pagination-container">
         <div className="content-pagination">
+          <button
+            onClick={() => handlePageChange(currentPage - 1)}
+            disabled={currentPage === 1}
+            className="pagination-button"
+          >
+            Previous
+          </button>
           {renderPagination()}
+          <button
+            onClick={() => handlePageChange(currentPage + 1)}
+            disabled={indexOfLastItem >= sortedData.length}
+            className="pagination-button"
+          >
+            Next
+          </button>
         </div>
+
+        <button
+          className="add-word-button"
+          onClick={() => setShowNewWordModal(true)}
+        >
+          + New Word
+        </button>
       </div>
 
       {selectedWord && (

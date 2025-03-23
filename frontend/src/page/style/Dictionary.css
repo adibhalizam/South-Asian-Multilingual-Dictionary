@@ -1,43 +1,3 @@
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 body {
   font-family: "Roboto", Georgia;
   margin: 0;
@@ -46,7 +6,8 @@ body {
   justify-content: center;
   height: 100vh;
   text-align: center;
-  background-color: #f3f3e0;
+  background-color: #f0f4f8; /* Slightly warmer background */
+  color: #2d3748;
 }
 
 .dictionary-page {
@@ -57,59 +18,95 @@ body {
   position: relative;
 }
 
-/* Header Container */
+/* Updated Header Container with gradient background */
 .dictionary-header {
   display: flex;
-  justify-content: center; /* Center the items horizontally */
-  align-items: center; /* Align the items vertically */
-  gap: 10px; /* Add some space between the title and the button */
-  margin-top: 20px;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 1800px; /* Added max-width to match dictionary-boxes */
+  padding-top: 20px;
+  padding-bottom: 20px;
+  box-sizing: border-box;
 }
 
-/* Title Styling */
+/* Title Styling - updated for better contrast against gradient */
 .dictionary-header h1 {
   font-size: 2.5em;
-  color: #133e87; /* Blue color for the title */
+  color: #2c5282;
   font-weight: bold;
+  margin: 0;
+  flex-grow: 2;
+  text-align: center;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.2); /* Subtle text shadow for readability */
 }
 
-/* Help Button Styling */
+.dictionary-header .right-button {
+  flex-basis: 120px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+.dictionary-header .left-button {
+  flex-basis: 120px;
+  display: flex;
+  justify-content: flex-start;
+}
+
+/* Help Button Styling - updated with warmer color */
 .help-button {
-  background-color: #608bc1;
+  background-color: #3a6ea5;
   color: white;
-  font-size: 1rem;
+  font-size: 1.2rem;
   font-weight: bold;
-  width: 25px; /* Set fixed width */
-  height: 25px; /* Set fixed height */
-  border-radius: 50%; /* Make it round */
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   border: none;
   display: flex;
   justify-content: center;
   align-items: center;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
 }
 
 .help-button:hover {
-  background-color: #cbdceb; /* Change to a lighter color on hover */
+  background-color: #2c5282;
+  transform: scale(1.1);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.help-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
+/* Admin Login button with consistent styling */
+.admin-login-button {
+  background-color: #3a6ea5;
+  color: white;
+  padding: 10px 15px;
+  font-size: 0.9rem;
+  border: 1px solid rgba(255, 255, 255, 0.4);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
 }
 
-/*SEARCH BAR*/
+.admin-login-button:hover {
+  background-color: #2c5282;
+  transform: translateY(-2px);
+}
+
+/*SEARCH BAR - updated with warmer tones*/
 .dictionary-search-bar-container {
   display: flex;
   justify-content: center;
   padding: 20px;
-  background-color: #f4f4f4;
+  background-color: white;
   border-radius: 20px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
   width: 100%;
-  min-width: 800px;
-  margin: 20px auto;
+  max-width: 1800px;
+  margin: 0 auto 30px auto;
+  box-sizing: border-box;
+  border: 1px solid #e2e8f0;
 }
 
 .dictionary-search-bar-container select,
@@ -117,46 +114,63 @@ body {
 .dictionary-search-bar-container button {
   padding: 15px;
   margin-right: 5px;
-  border: 2px solid #ccc;
+  border: 1px solid #e2e8f0;
   font-size: 1rem;
 }
 
 .dictionary-search-bar-container select {
   width: 150px;
-  background-color: #608bc1;
+  background-color: #3a6ea5; /* More professional blue */
   border-radius: 5px;
   color: white;
+  border: none;
+  cursor: pointer;
 }
 
 .dictionary-search-bar-container input {
   flex-grow: 1;
   border-radius: 5px;
   min-width: 200px;
+  background-color: #f7f9fc;
+  border: 1px solid #cbd5e0;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.dictionary-search-bar-container input:focus {
+  border-color: #3a6ea5;
+  box-shadow: 0 0 0 2px rgba(58, 110, 165, 0.2);
+  outline: none;
 }
 
 .dictionary-search-bar-container button {
-  background-color: #608bc1;
+  background-color: #3a6ea5;
   color: white;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: all 0.3s ease;
   border-radius: 30px;
+  border: none;
+  font-weight: 500;
 }
 
 .dictionary-search-bar-container button:hover {
-  background-color: #cbdceb;
-  color: black;
+  background-color: #2c5282;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 }
 
-/*ERROR MESSAGE*/
+/*ERROR MESSAGE - updated with softer red*/
 .dictionary-error-message {
-  color: #d8000c;
-  padding: 15px 15px;
+  color: #e53e3e;
+  background-color: rgba(229, 62, 62, 0.1);
+  padding: 15px;
   border-radius: 8px;
   font-size: 16px;
   min-width: 80%;
   margin-top: 10px;
+  border-left: 4px solid #e53e3e;
 }
-/*TRANSLATION BOX*/
+
+/*TRANSLATION BOXES - updated with more personality*/
 .dictionary-boxes {
   display: flex;
   flex-wrap: wrap;
@@ -165,7 +179,7 @@ body {
   margin-top: 20px;
   align-items: center;
   max-width: 1800px;
-  justify-content: center; /* Center boxes horizontally */
+  justify-content: center;
 }
 
 .dictionary-boxTitle {
@@ -174,9 +188,14 @@ body {
   border: none;
   background: transparent;
   outline: none;
-  color: #133e87;
+  color: #3a6ea5; /* Updated to match header */
   cursor: pointer;
   padding: 0;
+  transition: color 0.3s ease;
+}
+
+.dictionary-boxTitle:hover {
+  color: #2c5282;
 }
 
 .dictionary-boxTitle:focus {
@@ -184,7 +203,7 @@ body {
 }
 
 .dictionary-boxTitle option {
-  color: #133e87;
+  color: #2d3748;
   background-color: #ffffff;
   padding: 10px;
   text-align: center;
@@ -192,10 +211,10 @@ body {
 }
 
 .dictionary-box {
-  background-color: #cbdceb;
-  border: 4px solid #608bc1;
-  border-radius: 10px;
-  padding: 20px;
+  background-color: white;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  border-radius: 12px;
+  padding: 25px;
   width: 28vw;
   min-height: 600px;
   min-width: 250px;
@@ -203,111 +222,97 @@ body {
   transition: all 0.3s ease;
   box-sizing: border-box;
   display: flex;
-  flex-direction: column; /* Stack the content vertically */
-  gap: 20px; /* Add spacing between elements inside the box */
+  flex-direction: column;
+  gap: 20px;
+  border-top: 5px solid #3a6ea5; /* Adds a touch of color and personality */
 }
 
 .dictionary-box:hover {
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1); /* Subtle hover effect */
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.12);
+  transform: translateY(-4px);
 }
 
 .dictionary-box-content {
   display: flex;
   flex-direction: column;
-  justify-content: space-between; /* Distribute content evenly */
-  flex-grow: 1; /* Stretch to fill the box */
+  justify-content: space-between;
+  flex-grow: 1;
 }
 
 .dictionary-content-text p {
   margin: 8px 0;
   font-size: 1rem;
   line-height: 1.5;
+  color: #4a5568;
 }
 
 .dictionary-content-text strong {
   font-weight: bold;
-  color: #133e87;
+  color: #2c5282; /* Matching blue theme */
 }
 
-/* Force to always occupy 3 lines */
+/* Force to always occupy set lines */
 .dictionary-content-text p:nth-child(2) {
-  /* Translated Word */
   display: -webkit-box;
-  -webkit-line-clamp: 2; /* Limit to exactly 3 lines */
+  -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
   text-overflow: ellipsis;
   line-height: 1.6;
-  max-height: calc(2 * 1.6em); /* Ensure max height for 3 lines */
-  min-height: calc(2 * 1.6em); /* Ensure minimum height for 3 lines */
-  white-space: normal; /* Ensure wrapping of text */
-}
-.dictionary-content-text p:nth-child(10) {
-  /* Translated Word */
-  display: -webkit-box;
-  -webkit-line-clamp: 3; /* Limit to exactly 3 lines */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  line-height: 1.6;
-  max-height: calc(3 * 1.6em); /* Ensure max height for 3 lines */
-  min-height: calc(3 * 1.6em); /* Ensure minimum height for 3 lines */
-  white-space: normal; /* Ensure wrapping of text */
+  max-height: calc(2 * 1.6em);
+  min-height: calc(2 * 1.6em);
+  white-space: normal;
 }
 
-/* Ensure the audio player stays inside the box */
+.dictionary-content-text p:nth-child(10) {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.6;
+  max-height: calc(3 * 1.6em);
+  min-height: calc(3 * 1.6em);
+  white-space: normal;
+}
+
+/* Audio player styling */
 .dictionary-audio-player {
-  margin-top: 10px;
+  margin-top: 15px;
   width: 100%;
   max-width: 500px;
-  background-color: #f1f1f1;
+  background-color: #f7f9fc;
   border-radius: 8px;
   box-sizing: border-box;
   margin-bottom: 10px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
 }
 
-@media (max-width: 768px) {
-  .dictionary-box {
-    width: 100%; /* Full width on smaller screens */
-    max-width: 100%; /* Remove max-width restriction on smaller screens */
-  }
-
-  .dictionary-audio-player {
-    width: 100%; /* Make the audio player responsive */
-  }
-}
-
-/*IMAGE*/
-/* Image Container and Display Styles */
+/* IMAGE - enhanced styling */
 .dictionary-image-container {
   display: flex;
   justify-content: center;
   align-items: center;
-  background-color: #f3f3f3;
-  border: 2px dashed #cbdceb;
+  background-color: white;
+  border: 1px solid #e2e8f0;
   border-radius: 12px;
   width: 100%;
-  max-width: 800px; /* Reduced from 1200px for better presentation */
-  margin: 20px auto;
+  max-width: 800px;
+  margin: 30px auto;
   position: relative;
   overflow: hidden;
-  
-  /* Option 1: Fixed aspect ratio */
-  aspect-ratio: 16 / 9;  /* Standard widescreen ratio */
-  
-  /* Option 2: Fixed height (comment out aspect-ratio above and uncomment below) */
-  /* height: 400px; */
+  aspect-ratio: 16 / 9;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
 .dictionary-large-image {
   width: 100%;
   height: 100%;
-  object-fit: contain; /* Changed from 'cover' to 'contain' */
-  padding: 16px; /* Add some padding to prevent image from touching borders */
-  background-color: white; /* Optional: adds a white background */
+  object-fit: contain;
+  padding: 16px;
+  background-color: white;
 }
 
-/* For images that are too tall or too wide */
 .dictionary-image-wrapper {
   display: flex;
   justify-content: center;
@@ -317,68 +322,72 @@ body {
   margin: 20px auto;
   height: 100%;
   position: relative;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
 }
 
-/* Placeholder styling */
 .dictionary-image-placeholder {
   display: flex;
   justify-content: center;
   align-items: center;
   width: 100%;
   height: 100%;
-  color: #a1a1a1;
+  color: #a0aec0;
   font-size: 1.2rem;
-  background-color: #f8f8f8;
+  background-color: white;
+  padding: 40px;
+  border-radius: 8px;
+  border: 1px dashed #cbd5e0;
 }
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+  .dictionary-header {
+    flex-direction: column;
+    padding: 15px;
+  }
+  
+  .dictionary-header h1 {
+    margin: 10px 0;
+    font-size: 2em;
+  }
+  
+  .dictionary-header .left-button,
+  .dictionary-header .right-button {
+    flex-basis: auto;
+    margin: 5px 0;
+  }
+  
+  .dictionary-box {
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  .dictionary-search-bar-container {
+    flex-direction: column;
+    gap: 10px;
+  }
+  
+  .dictionary-search-bar-container select,
+  .dictionary-search-bar-container input,
+  .dictionary-search-bar-container button {
+    width: 100%;
+    margin-right: 0;
+  }
+  
   .dictionary-image-container {
     max-width: 100%;
-    /* Option 1: Keep aspect ratio */
-    aspect-ratio: 4 / 3;  /* Slightly taller ratio for mobile */
-    
-    /* Option 2: Fixed height for mobile */
-    /* height: 300px; */
+    aspect-ratio: 4 / 3;
   }
 }
 
 @media (max-width: 480px) {
   .dictionary-image-container {
-    /* Option 1: Even smaller aspect ratio for mobile */
-    aspect-ratio: 1 / 1;  /* Square ratio for very small screens */
-    
-    /* Option 2: Smaller fixed height */
-    /* height: 250px; */
+    aspect-ratio: 1 / 1;
   }
   
   .dictionary-large-image {
-    padding: 8px; /* Reduced padding for small screens */
+    padding: 8px;
   }
-}
-
-/*LOGIN BUTTON*/
-.login-button {
-  background-color: #608bc1;
-  color: white;
-  padding: 12px 20px;
-  font-size: 1rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, transform 0.3s ease;
-  text-align: center;
-  width: 200px;
-  display: block;
-  margin: 20px auto;
-}
-
-.login-button:hover {
-  background-color: #cbdceb;
-  color: black;
-}
-
-.login-button:focus {
-  outline: none;
-  box-shadow: 0 0 5px rgba(0, 0, 0, 0.2);
 }
