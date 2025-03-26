@@ -155,7 +155,7 @@ const Settings = () => {
 
     {users.map(user => (
       <div key={user.email} className="user-row">
-        <div>{user.email}</div>
+        <div style={{ textAlign: "right" }}>{user.email}</div>
         <div>{user.role}</div>
         <div>{user.languages ? user.languages.join(', ') : '-'}</div>
         <div>

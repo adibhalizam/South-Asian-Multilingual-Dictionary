@@ -348,35 +348,35 @@ body {
     flex-direction: column;
     padding: 15px;
   }
-  
+
   .dictionary-header h1 {
     margin: 10px 0;
     font-size: 2em;
   }
-  
+
   .dictionary-header .left-button,
   .dictionary-header .right-button {
     flex-basis: auto;
     margin: 5px 0;
   }
-  
+
   .dictionary-box {
     width: 100%;
     max-width: 100%;
   }
-  
+
   .dictionary-search-bar-container {
     flex-direction: column;
     gap: 10px;
   }
-  
+
   .dictionary-search-bar-container select,
   .dictionary-search-bar-container input,
   .dictionary-search-bar-container button {
     width: 100%;
     margin-right: 0;
   }
-  
+
   .dictionary-image-container {
     max-width: 100%;
     aspect-ratio: 4 / 3;
@@ -387,8 +387,14 @@ body {
   .dictionary-image-container {
     aspect-ratio: 1 / 1;
   }
-  
+
   .dictionary-large-image {
     padding: 8px;
   }
+}
+
+.logo {
+  padding: 15px;
+  width: 200px;
+  height: auto;
 }
