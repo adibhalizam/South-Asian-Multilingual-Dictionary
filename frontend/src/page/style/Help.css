@@ -3,7 +3,8 @@
 /* General Container */
 .help-container {
     padding: 40px 20px;
-    max-width: 1200px;
+    /* max-width: 1200px; */
+    width: 1200px;
     margin: 0 auto;
   }
   
@@ -49,7 +50,8 @@
   .subsection-title {
     font-size: 1.8rem;
     font-weight: bold;
-    color: #608bc1; /* Baby yellow */
+    color: #133e87;
+    /* color: #608bc1; */
     margin-bottom: 15px;
     padding-bottom: 5px;
     border-bottom: 2px solid #608bc1; /* Underline with baby yellow */
@@ -92,6 +94,7 @@
     border-left: 5px solid #133e87; /* Dark blue line */
     background-color: #f9f9f9; /* Light gray background */
     border-radius: 8px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   }
   
   /* Mobile Responsiveness */
@@ -134,3 +137,145 @@
       font-size: 0.9rem;
     }
   }
+
+
+/* Help Page Navigation Tabs */
+.help-tabs {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 30px;
+  border-bottom: 2px solid #e0e0e0;
+}
+
+.help-tabs button {
+  padding: 12px 24px;
+  margin: 0 10px;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #4f81bd;
+  background-color: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.help-tabs button:hover {
+  color: #133e87;
+  border-bottom-color: #133e87;
+}
+
+.help-tabs button.active {
+  color: #133e87;
+  border-bottom-color: #133e87;
+  font-weight: bold;
+}
+
+/* Responsive Adjustments */
+@media (max-width: 480px) {
+  .help-tabs {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .help-tabs button {
+    margin: 10px 0;
+    width: 80%;
+    padding: 12px;
+    text-align: center;
+    border-bottom: none;
+    border: 2px solid transparent;
+  }
+
+  .help-tabs button:hover,
+  .help-tabs button.active {
+    border-color: #133e87;
+    background-color: #f9f9f9;
+  }
+}
+
+/* Team Section Styles */
+.team-section {
+  text-align: center;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.team-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+  padding: 20px 0;
+}
+
+.team-member-card {
+  background-color: #f9f9f9;
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease;
+}
+
+.team-member-card:hover {
+  transform: scale(1.05);
+}
+
+.team-member-image {
+  width: 200px;
+  height: 200px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 15px;
+}
+
+.team-member-info h3 {
+  color: #133e87;
+  margin-bottom: 5px;
+  min-height: 48px; /* Ensures two lines of text space */
+}
+
+.team-member-info p {
+  color: #608bc1;
+  margin-bottom: 10px;
+  min-height: 48px; /* Ensures two lines of text space */
+}
+
+.linkedin-link {
+  display: inline-block;
+  background-color: #133e87;
+  color: white;
+  padding: 8px 15px;
+  text-decoration: none;
+  border-radius: 5px;
+  transition: background-color 0.3s ease;
+}
+
+.linkedin-link:hover {
+  background-color: #336699;
+}
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .team-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  
+  .team-member-info h3,
+  .team-member-info p {
+    min-height: 40px; /* Adjusted for smaller screens */
+    font-size: 0.9rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .team-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .team-member-info h3,
+  .team-member-info p {
+    min-height: 36px; /* Further adjusted for smallest screens */
+    font-size: 0.85rem;
+  }
+}

@@ -371,7 +371,6 @@ const Dictionary = () => {
           />
         </div>
       )} */}
-
     </div>
   );
 };

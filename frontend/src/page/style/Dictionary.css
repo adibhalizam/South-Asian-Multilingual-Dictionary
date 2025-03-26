@@ -311,6 +311,7 @@ body {
   object-fit: contain;
   padding: 16px;
   background-color: white;
+  border-radius: 12px;
 }
 
 .dictionary-image-wrapper {
