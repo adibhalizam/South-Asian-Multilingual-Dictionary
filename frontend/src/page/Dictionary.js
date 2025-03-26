@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './style/Dictionary.css';
 import Umichlogo from './assets/UMich.png';
-import LSAlogo from './assets/LSA.png';
 
 const LANGUAGE_MAP = {
   1: 'Urdu',
@@ -373,7 +372,7 @@ const Dictionary = () => {
           />
         </div>
       )} */}
-      <div className="logoname">
+      <div>
         <img className="logo" src={Umichlogo} alt="University of Michigan" />
       </div>
 
